@@ -37,7 +37,13 @@ class ListingAdapter(
         holder.txtListingTitle.text = listing.title
         holder.txtListingPrice.text = "P${listing.price} / month"
         holder.txtListingLocation.text = listing.location
-        holder.imgListing.setImageResource(R.mipmap.ic_launcher)
+        
+        // Using high quality/AI generated image if available
+        if (listing.imageRes != 0) {
+            holder.imgListing.setImageResource(listing.imageRes)
+        } else {
+            holder.imgListing.setImageResource(R.mipmap.ic_launcher)
+        }
         
         // Show RESERVED badge if booked
         if (listing.status == "RESERVED") {

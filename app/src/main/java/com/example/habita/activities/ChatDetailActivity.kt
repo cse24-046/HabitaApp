@@ -5,24 +5,35 @@ import android.os.Bundle
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.habita.R
 import com.example.habita.adapters.ChatAdapter
+import com.example.habita.database.AppDatabase
 import com.example.habita.database.Message
+import kotlinx.coroutines.launch
 
 class ChatDetailActivity : AppCompatActivity() {
 
     private lateinit var adapter: ChatAdapter
     private val messageList = mutableListOf<Message>()
+    private lateinit var database: AppDatabase
+    private var chatRoomId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_detail)
 
+        database = AppDatabase.getDatabase(this)
         val partnerName = intent.getStringExtra("partnerName") ?: "Provider"
         findViewById<TextView>(R.id.txtChatPartnerName).text = partnerName
+        
+        // Generate a simple roomId: myId_providerName
+        val myId = getSharedPreferences("UserPrefs", MODE_PRIVATE).getString("userId", "user") ?: "user"
+        chatRoomId = "${myId}_$partnerName"
 
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener {
             finish()
@@ -37,6 +48,18 @@ class ChatDetailActivity : AppCompatActivity() {
             stackFromEnd = true
         }
         recyclerMessages.adapter = adapter
+        
+        // Load existing messages for this room
+        lifecycleScope.launch {
+            database.messageDao().getMessagesForRoom(chatRoomId).collect { messages ->
+                messageList.clear()
+                messageList.addAll(messages)
+                adapter.notifyDataSetChanged()
+                if (messageList.isNotEmpty()) {
+                    recyclerMessages.scrollToPosition(messageList.size - 1)
+                }
+            }
+        }
         
         // Navigation Icons
         findViewById<ImageButton>(R.id.navHome).setOnClickListener {
@@ -62,11 +85,14 @@ class ChatDetailActivity : AppCompatActivity() {
                 val newMessage = Message(
                     text = text,
                     timestamp = System.currentTimeMillis(),
-                    senderId = "me" // Dummy current user ID
+                    senderId = "me",
+                    chatRoomId = chatRoomId
                 )
-                adapter.addMessage(newMessage)
-                recyclerMessages.smoothScrollToPosition(adapter.itemCount - 1)
-                editMessage.text.clear()
+                
+                lifecycleScope.launch {
+                    database.messageDao().insertMessage(newMessage)
+                    editMessage.text.clear()
+                }
             }
         }
     }

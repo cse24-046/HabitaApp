@@ -2,7 +2,6 @@ package com.example.habita.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -21,12 +20,11 @@ class PaymentActivity : AppCompatActivity() {
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
         val txtPaymentTitle = findViewById<TextView>(R.id.txtPaymentTitle)
         val txtPaymentAmount = findViewById<TextView>(R.id.txtPaymentAmount)
-        val radioPaymentMethod = findViewById<RadioGroup>(R.id.radioPaymentMethod)
         val btnPay = findViewById<Button>(R.id.btnPay)
         
-        val layoutCardDetails = findViewById<LinearLayout>(R.id.layoutCardDetails)
-        val layoutMobileDetails = findViewById<LinearLayout>(R.id.layoutMobileDetails)
-        val spinnerMobileProvider = findViewById<Spinner>(R.id.spinnerMobileProvider)
+        val etCardNumber = findViewById<EditText>(R.id.editCardNumber)
+        val etExpiry = findViewById<EditText>(R.id.editExpiry)
+        val etCVV = findViewById<EditText>(R.id.editCVV)
 
         val title = intent.getStringExtra("title") ?: "Selected Room"
         val price = intent.getIntExtra("price", 0)
@@ -35,15 +33,9 @@ class PaymentActivity : AppCompatActivity() {
         txtPaymentTitle.text = title
         txtPaymentAmount.text = "Deposit: P$deposit"
 
-        btnBack.setOnClickListener {
-            finish()
-        }
+        btnBack.setOnClickListener { finish() }
 
-        // Setup Mobile Providers
-        val providers = arrayOf("Orange Money", "MyZaka", "Smega")
-        spinnerMobileProvider.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, providers)
-
-        // Navigation for bottom bar
+        // Standard Navigation Panel
         findViewById<ImageButton>(R.id.navHome).setOnClickListener {
             startActivity(Intent(this, HomeActivity::class.java))
             finish()
@@ -61,62 +53,28 @@ class PaymentActivity : AppCompatActivity() {
             finish()
         }
 
-        // Handle dynamic UI visibility for payment methods
-        radioPaymentMethod.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                R.id.radioCard -> {
-                    layoutCardDetails.visibility = View.VISIBLE
-                    layoutMobileDetails.visibility = View.GONE
-                }
-                R.id.radioWallet -> {
-                    layoutCardDetails.visibility = View.GONE
-                    layoutMobileDetails.visibility = View.VISIBLE
-                }
-                else -> {
-                    layoutCardDetails.visibility = View.GONE
-                    layoutMobileDetails.visibility = View.GONE
-                }
-            }
-        }
-
         btnPay.setOnClickListener {
-            val selectedId = radioPaymentMethod.checkedRadioButtonId
-            if (selectedId == -1) {
-                Toast.makeText(this, "Please choose a payment method", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            val cardNum = etCardNumber.text.toString().trim()
+            val expiry = etExpiry.text.toString().trim()
+            val cvv = etCVV.text.toString().trim()
 
-            // Simple validation
-            if (selectedId == R.id.radioCard) {
-                val cardNum = findViewById<EditText>(R.id.editCardNumber).text.toString()
-                if (cardNum.length < 16) {
-                    Toast.makeText(this, "Please enter a valid card number", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-            } else if (selectedId == R.id.radioWallet) {
-                val mobileNum = findViewById<EditText>(R.id.editMobileNumber).text.toString()
-                if (mobileNum.isEmpty()) {
-                    Toast.makeText(this, "Please enter your mobile number", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
+            if (cardNum.length < 16 || expiry.isEmpty() || cvv.length < 3) {
+                Toast.makeText(this, "Please enter valid card details", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
             val reference = "HB" + System.currentTimeMillis().toString().takeLast(6)
 
             lifecycleScope.launch {
-                // Update listing status to RESERVED
-                val listing = database.listingDao().getListingByTitle(title)
+                val dao = database.listingDao()
+                val listing = dao.getListingByTitle(title)
                 if (listing != null) {
-                    database.listingDao().updateListing(listing.copy(status = "RESERVED"))
+                    // Update status to RESERVED
+                    dao.updateListing(listing.copy(status = "RESERVED"))
                 }
 
-                // Save record
-                val booking = Booking(
-                    title = title,
-                    reference = reference,
-                    status = "RESERVED"
-                )
-                database.bookingDao().saveBooking(booking)
+                // Log the booking in local Room DB
+                database.bookingDao().saveBooking(Booking(title = title, reference = reference, status = "RESERVED"))
 
                 val intent = Intent(this@PaymentActivity, SuccessActivity::class.java)
                 intent.putExtra("reference", reference)

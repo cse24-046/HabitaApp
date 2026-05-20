@@ -1,28 +1,46 @@
 package com.example.habita.utils
 
 import com.example.habita.database.Listing
+import com.example.habita.R
 import java.util.Locale
 
 object SampleData {
     fun get65Listings(): List<Listing> {
-        val locations = listOf("Gaborone", "Tlokweng", "Broadhurst", "G-West", "Phakalane")
-        val types = listOf("Single Room", "Bachelor Pad", "One Bedroom Flat", "Shared Apartment")
+        val locations = listOf("Gaborone", "Tlokweng", "Broadhurst", "G-West", "Phakalane", "Block 6", "Mogoditshane", "Kgale")
+        val types = listOf("Single Room", "Bachelor Pad", "One Bedroom Flat", "Shared Apartment", "Studio")
         val listings = mutableListOf<Listing>()
+        
+        // Simulating different AI generated styles using built-in drawables for placeholders
+        val dummyImages = listOf(
+            android.R.drawable.ic_menu_gallery,
+            android.R.drawable.ic_menu_camera,
+            android.R.drawable.ic_menu_today,
+            android.R.drawable.ic_dialog_info,
+            android.R.drawable.ic_menu_slideshow
+        )
         
         for (i in 1..65) {
             val loc = locations[i % locations.size]
             val type = types[i % types.size]
-            val price = 500 + (i * 130) % 4500
+            val price = 400 + (i * 145) % 6000
             val day = (i % 28) + 1
-            val month = if (i % 2 == 0) "May" else "June"
+            val monthIdx = (i / 4) % 4
+            val months = listOf("May", "June", "July", "August")
+            val month = months[monthIdx]
+            
+            // Randomly mark some as RESERVED
+            val status = if (i % 6 == 0) "RESERVED" else "Available"
+            
             listings.add(
                 Listing(
-                    title = "$loc $type #$i",
+                    id = i,
+                    title = "Premium $type in $loc #$i",
                     price = price,
                     location = loc,
                     availabilityDate = String.format(Locale.getDefault(), "%02d %s 2026", day, month),
                     houseType = type,
-                    status = if (i % 10 == 0) "RESERVED" else "Available"
+                    status = status,
+                    imageRes = dummyImages[i % dummyImages.size]
                 )
             )
         }

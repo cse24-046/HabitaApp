@@ -12,5 +12,6 @@ data class Listing(
     val availabilityDate: String,
     val houseType: String,
     val isSaved: Boolean = false,
-    val status: String = "Available" // "Available" or "RESERVED"
+    val status: String = "Available", // "Available" or "RESERVED"
+    val imageRes: Int = 0
 )

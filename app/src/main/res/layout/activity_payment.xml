@@ -17,7 +17,7 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-            <!-- Back Button -->
+            <!-- Header -->
             <ImageButton
                 android:id="@+id/btnBack"
                 android:layout_width="48dp"
@@ -51,46 +51,40 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Deposit: P500"
-                android:textSize="20sp"
+                android:textSize="24sp"
                 android:textStyle="bold"
                 android:textColor="#6C4DFF" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:text="@string/choose_payment_method"
+                android:layout_marginTop="32dp"
+                android:text="Payment Method: Credit / Debit Card"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="#1F1F39" />
 
-            <RadioGroup
-                android:id="@+id/radioPaymentMethod"
+            <!-- Card Payment Form -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp">
-
-                <!-- Card Payment -->
-                <RadioButton
-                    android:id="@+id/radioCard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/card_payment" />
+                android:layout_marginTop="12dp"
+                app:cardCornerRadius="16dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#EEEEEE"
+                app:cardElevation="2dp">
 
                 <LinearLayout
-                    android:id="@+id/layoutCardDetails"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="gone"
-                    android:paddingStart="32dp"
-                    android:paddingEnd="0dp"
-                    android:layout_marginTop="8dp">
+                    android:padding="20dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginBottom="8dp">
+                        android:layout_marginBottom="16dp">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/visa" android:background="#1A1F71" android:textColor="#FFFFFF" android:padding="4dp" android:textStyle="bold" android:layout_marginEnd="8dp"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/mastercard" android:background="#EB001B" android:textColor="#FFFFFF" android:padding="4dp" android:textStyle="bold" android:layout_marginEnd="8dp"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/paypal" android:background="#003087" android:textColor="#FFFFFF" android:padding="4dp" android:textStyle="bold"/>
@@ -99,86 +93,50 @@
                     <EditText
                         android:id="@+id/editCardNumber"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="50dp"
                         android:hint="@string/card_number_hint"
+                        android:background="@drawable/bg_input"
+                        android:padding="12dp"
                         android:inputType="number"
-                        android:maxLength="16" />
+                        android:maxLength="16"
+                        android:importantForAutofill="no" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
                         android:orientation="horizontal">
                         <EditText
                             android:id="@+id/editExpiry"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="50dp"
                             android:layout_weight="1"
                             android:hint="@string/expiry_date_hint"
-                            android:inputType="date" />
+                            android:background="@drawable/bg_input"
+                            android:padding="12dp"
+                            android:inputType="date"
+                            android:importantForAutofill="no" />
+                        <View android:layout_width="12dp" android:layout_height="0dp"/>
                         <EditText
                             android:id="@+id/editCVV"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="50dp"
                             android:layout_weight="1"
                             android:hint="@string/cvv_hint"
+                            android:background="@drawable/bg_input"
+                            android:padding="12dp"
                             android:inputType="numberPassword"
-                            android:maxLength="3" />
+                            android:maxLength="3"
+                            android:importantForAutofill="no" />
                     </LinearLayout>
                 </LinearLayout>
-
-                <!-- Mobile Wallet -->
-                <RadioButton
-                    android:id="@+id/radioWallet"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/mobile_wallet" />
-
-                <LinearLayout
-                    android:id="@+id/layoutMobileDetails"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone"
-                    android:paddingStart="32dp"
-                    android:paddingEnd="0dp"
-                    android:layout_marginTop="8dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="8dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Orange" android:background="#FF6600" android:textColor="#FFFFFF" android:padding="4dp" android:textStyle="bold" android:layout_marginEnd="8dp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MyZaka" android:background="#00AEEF" android:textColor="#FFFFFF" android:padding="4dp" android:textStyle="bold" android:layout_marginEnd="8dp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Smega" android:background="#FFD700" android:textColor="#000000" android:padding="4dp" android:textStyle="bold"/>
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/select_provider"
-                        android:textSize="14sp" />
-
-                    <Spinner
-                        android:id="@+id/spinnerMobileProvider"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp" />
-
-                    <EditText
-                        android:id="@+id/editMobileNumber"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/mobile_number_hint"
-                        android:inputType="phone" />
-                </LinearLayout>
-
-            </RadioGroup>
+            </com.google.android.material.card.MaterialCardView>
 
             <Button
                 android:id="@+id/btnPay"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="40dp"
                 android:background="@drawable/bg_primary_button"
                 android:text="@string/pay_and_reserve"
                 android:textAllCaps="false"
@@ -188,7 +146,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- BOTTOM NAV ICONS -->
+    <!-- Navigation -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="64dp"
@@ -196,8 +154,7 @@
         android:background="#FFFFFF"
         android:elevation="8dp"
         android:gravity="center">
-
-        <ImageButton android:id="@+id/navHome" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/ic_menu_today" app:tint="#777799" android:contentDescription="@string/nav_home" />
+        <ImageButton android:id="@+id/navHome" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/ic_menu_today" app:tint="#6C4DFF" android:contentDescription="@string/nav_home" />
         <ImageButton android:id="@+id/navSaved" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/btn_star_big_on" app:tint="#777799" android:contentDescription="@string/nav_saved" />
         <ImageButton android:id="@+id/navChat" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/stat_notify_chat" app:tint="#777799" android:contentDescription="@string/nav_chat" />
         <ImageButton android:id="@+id/navProfile" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/ic_menu_myplaces" app:tint="#777799" android:contentDescription="@string/nav_profile" />

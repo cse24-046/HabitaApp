@@ -51,7 +51,11 @@ class SavedActivity : AppCompatActivity() {
             database.listingDao().getSavedListings().collect { savedListings ->
                 recyclerSaved.adapter = ListingAdapter(savedListings,
                     onItemClick = { listing ->
-                        showImageSliderDialog(listing)
+                        if (listing.status == "RESERVED") {
+                            Toast.makeText(this@SavedActivity, "This home is already reserved.", Toast.LENGTH_SHORT).show()
+                        } else {
+                            showImageSliderDialog(listing)
+                        }
                     },
                     onFavoriteClick = { listing ->
                         lifecycleScope.launch {
@@ -70,40 +74,34 @@ class SavedActivity : AppCompatActivity() {
         dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
         val viewPager = dialog.findViewById<ViewPager2>(R.id.viewPagerImages)
-        val tabLayout = dialog.findViewById<TabLayout>(R.id.tabDots)
         val btnClose = dialog.findViewById<Button>(R.id.btnClose)
         
         val layout = btnClose.parent as LinearLayout
         val btnViewDetails = Button(this).apply {
-            text = "View Full Details"
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { topMargin = 8 }
+            text = getString(R.string.view_full_details)
+            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = 8 }
         }
         layout.addView(btnViewDetails, layout.indexOfChild(btnClose))
 
-        val sampleImages = listOf(
-            R.mipmap.ic_launcher,
-            android.R.drawable.ic_menu_gallery,
-            android.R.drawable.ic_menu_camera
-        )
+        val sampleImages = if (listing.imageRes != 0) {
+            listOf(listing.imageRes, android.R.drawable.ic_menu_gallery)
+        } else {
+            listOf(R.mipmap.ic_launcher, android.R.drawable.ic_menu_camera)
+        }
 
         viewPager.adapter = ImageSliderAdapter(sampleImages)
-        TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
+        TabLayoutMediator(dialog.findViewById(R.id.tabDots), viewPager) { _, _ -> }.attach()
 
         btnClose.setOnClickListener { dialog.dismiss() }
         btnViewDetails.setOnClickListener {
             dialog.dismiss()
-            val intent = Intent(this, DetailsActivity::class.java).apply {
+            startActivity(Intent(this, DetailsActivity::class.java).apply {
                 putExtra("title", listing.title)
                 putExtra("price", listing.price)
                 putExtra("location", listing.location)
                 putExtra("date", listing.availabilityDate)
-            }
-            startActivity(intent)
+            })
         }
-
         dialog.show()
     }
 }

@@ -3,21 +3,33 @@ package com.example.habita.activities
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.habita.R
 import com.example.habita.adapters.ChatListAdapter
+import com.example.habita.database.AppDatabase
+import com.example.habita.database.Message
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 data class Conversation(val providerName: String, val lastMessage: String, val time: String)
 
 class ChatActivity : AppCompatActivity() {
 
+    private lateinit var database: AppDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
-        // Standardized Navigation
+        database = AppDatabase.getDatabase(this)
+
+        // Navigation
         findViewById<ImageButton>(R.id.navHome).setOnClickListener {
             startActivity(Intent(this, HomeActivity::class.java))
             finish()
@@ -31,20 +43,30 @@ class ChatActivity : AppCompatActivity() {
             finish()
         }
 
-        // Chat List
         val recyclerChatList = findViewById<RecyclerView>(R.id.recyclerChatList)
         recyclerChatList.layoutManager = LinearLayoutManager(this)
         
-        val conversations = listOf(
-            Conversation("Block 6 Provider", "Is the room still available?", "10:30 AM"),
-            Conversation("Tlokweng Rentals", "Yes, you can visit tomorrow.", "Yesterday"),
-            Conversation("G-West Apartments", "Deposit received, thank you!", "Mon")
-        )
+        // Load only real conversations from local Room Database
+        lifecycleScope.launch {
+            database.messageDao().getLatestMessagesPerRoom().collect { messages ->
+                val conversations = messages.map { msg ->
+                    Conversation(
+                        providerName = msg.chatRoomId.substringAfter("_"),
+                        lastMessage = msg.text,
+                        time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(msg.timestamp))
+                    )
+                }
 
-        recyclerChatList.adapter = ChatListAdapter(conversations) { conversation ->
-            val intent = Intent(this, ChatDetailActivity::class.java)
-            intent.putExtra("partnerName", conversation.providerName)
-            startActivity(intent)
+                if (conversations.isEmpty()) {
+                    Toast.makeText(this@ChatActivity, "No active chats. Start one from property details!", Toast.LENGTH_LONG).show()
+                }
+
+                recyclerChatList.adapter = ChatListAdapter(conversations) { conversation ->
+                    val intent = Intent(this@ChatActivity, ChatDetailActivity::class.java)
+                    intent.putExtra("partnerName", conversation.providerName)
+                    startActivity(intent)
+                }
+            }
         }
     }
 }
