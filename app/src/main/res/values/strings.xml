@@ -1,0 +1,66 @@
+<resources>
+    <string name="app_name">Habita</string>
+    <string name="profile_title">Profile</string>
+    <string name="profile_name_default">Bianca Student</string>
+    <string name="profile_email_default">student@habita.com</string>
+    <string name="account_settings">Account Settings</string>
+    <string name="edit_personal_details">Edit Personal Details</string>
+    <string name="notifications">Notifications</string>
+    <string name="help_support">Help &amp; Support</string>
+    <string name="log_out">Log Out</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_saved">Saved</string>
+    <string name="nav_chat">Chat</string>
+    <string name="nav_profile">Profile</string>
+
+    <string name="saved_title">Saved Listings</string>
+    <string name="saved_subtitle">Your favorite student homes</string>
+
+    <string name="card_number_hint">Card Number</string>
+    <string name="expiry_date_hint">MM/YY</string>
+    <string name="cvv_hint">CVV</string>
+    <string name="mobile_number_hint">Cell Number (e.g. 71XXXXXX)</string>
+
+    <string name="price_range_label">Price Range (P)</string>
+    <string name="location_label">Location</string>
+    <string name="house_type_label">House Type</string>
+    <string name="save_preferences">Save Preferences</string>
+
+    <string name="chat_title">Messages</string>
+    <string name="chat_hint">Type a message...</string>
+
+    <string name="payment_title">Secure Payment</string>
+    <string name="choose_payment_method">Choose payment method</string>
+    <string name="card_payment">Card Payment (Visa, MasterCard, PayPal)</string>
+    <string name="mobile_wallet">Mobile Wallet (Orange, MyZaka, Smega)</string>
+    <string name="pay_and_reserve">Pay &amp; Reserve</string>
+    <string name="select_provider">Select Provider</string>
+    <string name="back">Back</string>
+
+    <string name="orange_money">Orange Money</string>
+    <string name="myzaka">MyZaka</string>
+    <string name="smega">Smega</string>
+    <string name="paypal">PayPal</string>
+    <string name="visa">VISA</string>
+    <string name="mastercard">MasterCard</string>
+    <string name="reserved">RESERVED</string>
+    <string name="payment_successful">Payment Successful!</string>
+    <string name="back_to_explorer">Back to Explorer</string>
+
+    <string name="login_title">Welcome back!</string>
+    <string name="login_subtitle">Login to your Habita account</string>
+    <string name="register_title">Create Account</string>
+    <string name="register_subtitle">Join Habita and find your next home</string>
+    <string name="full_name_hint">Full Name</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="no_account">Don\'t have an account? Register</string>
+    <string name="already_have_account">Already have an account? Login</string>
+    <string name="save_listing">Save Listing</string>
+    <string name="status_available">Available</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="view_full_details">View Full Details</string>
+</resources>

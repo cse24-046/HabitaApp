@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="initial_price_values">
+        <item>500</item>
+        <item>3000</item>
+    </array>
+    <string-array name="locations_array">
+        <item>Gaborone</item>
+        <item>Tlokweng</item>
+        <item>Broadhurst</item>
+        <item>G-West</item>
+        <item>Phakalane</item>
+    </string-array>
+    <string-array name="house_types_array">
+        <item>Single Room</item>
+        <item>Bachelor Pad</item>
+        <item>One Bedroom Flat</item>
+        <item>Shared Apartment</item>
+    </string-array>
+</resources>

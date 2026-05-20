@@ -1,0 +1,28 @@
+<resources>
+    <style name="Theme.Habita" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">#6C4DFF</item>
+        <item name="colorPrimaryVariant">#583ED9</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">#2ECC71</item>
+        <item name="colorSecondaryVariant">#27AE60</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+
+        <!-- Background and Surface colors -->
+        <item name="android:windowBackground">#F7F7FB</item>
+        <item name="colorOnBackground">#1F1F39</item>
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="colorOnSurface">#1F1F39</item>
+        <item name="colorError">#FF4D4D</item>
+
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">#FFFFFF</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="CircleImage" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+</resources>
