@@ -26,7 +26,7 @@ class PaymentActivity : AppCompatActivity() {
         val etExpiry = findViewById<EditText>(R.id.editExpiry)
         val etCVV = findViewById<EditText>(R.id.editCVV)
 
-        val title = intent.getStringExtra("title") ?: "Selected Room"
+        val title = intent.getStringExtra("title") ?: "Premium Housing"
         val price = intent.getIntExtra("price", 0)
         val deposit = price / 2
 
@@ -35,7 +35,7 @@ class PaymentActivity : AppCompatActivity() {
 
         btnBack.setOnClickListener { finish() }
 
-        // Standard Navigation Panel
+        // Navigation for bottom bar
         findViewById<ImageButton>(R.id.navHome).setOnClickListener {
             startActivity(Intent(this, HomeActivity::class.java))
             finish()
@@ -46,10 +46,6 @@ class PaymentActivity : AppCompatActivity() {
         }
         findViewById<ImageButton>(R.id.navChat).setOnClickListener {
             startActivity(Intent(this, ChatActivity::class.java))
-            finish()
-        }
-        findViewById<ImageButton>(R.id.navProfile).setOnClickListener {
-            startActivity(Intent(this, ProfileActivity::class.java))
             finish()
         }
 
@@ -69,11 +65,11 @@ class PaymentActivity : AppCompatActivity() {
                 val dao = database.listingDao()
                 val listing = dao.getListingByTitle(title)
                 if (listing != null) {
-                    // Update status to RESERVED
+                    // Permanently mark the listing as RESERVED
                     dao.updateListing(listing.copy(status = "RESERVED"))
                 }
 
-                // Log the booking in local Room DB
+                // Record the confirmed booking
                 database.bookingDao().saveBooking(Booking(title = title, reference = reference, status = "RESERVED"))
 
                 val intent = Intent(this@PaymentActivity, SuccessActivity::class.java)

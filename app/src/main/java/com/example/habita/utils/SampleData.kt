@@ -10,7 +10,7 @@ object SampleData {
         val types = listOf("Single Room", "Bachelor Pad", "One Bedroom Flat", "Shared Apartment", "Studio")
         val listings = mutableListOf<Listing>()
         
-        // Simulating different AI generated styles using built-in drawables for placeholders
+        // Simulating high-quality AI images using built-in drawables as placeholders
         val dummyImages = listOf(
             android.R.drawable.ic_menu_gallery,
             android.R.drawable.ic_menu_camera,
@@ -31,16 +31,21 @@ object SampleData {
             // Randomly mark some as RESERVED
             val status = if (i % 6 == 0) "RESERVED" else "Available"
             
+            // Assign a main image and a list of images for the slider
+            val mainImg = dummyImages[i % dummyImages.size]
+            val extraImgs = listOf(mainImg, dummyImages[(i+1) % dummyImages.size], dummyImages[(i+2) % dummyImages.size])
+            
             listings.add(
                 Listing(
                     id = i,
-                    title = "Premium $type in $loc #$i",
+                    title = "Premium AI-Designed $type in $loc #$i",
                     price = price,
                     location = loc,
                     availabilityDate = String.format(Locale.getDefault(), "%02d %s 2026", day, month),
                     houseType = type,
                     status = status,
-                    imageRes = dummyImages[i % dummyImages.size]
+                    mainImage = mainImg,
+                    imageList = extraImgs
                 )
             )
         }

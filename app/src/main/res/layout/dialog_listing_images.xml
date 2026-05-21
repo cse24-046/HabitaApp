@@ -5,12 +5,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/bg_card"
-    android:padding="8dp">
+    android:padding="16dp">
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPagerImages"
         android:layout_width="match_parent"
-        android:layout_height="300dp" />
+        android:layout_height="250dp" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabDots"
@@ -23,11 +23,18 @@
         app:tabRippleColor="@null" />
 
     <Button
-        android:id="@+id/btnClose"
-        android:layout_width="wrap_content"
+        android:id="@+id/btnDialogViewDetails"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:text="@string/view_full_details"
+        android:layout_marginTop="16dp"
+        style="@style/Widget.MaterialComponents.Button" />
+
+    <Button
+        android:id="@+id/btnClose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="Close"
-        android:layout_marginTop="8dp" />
+        style="@style/Widget.MaterialComponents.Button.TextButton" />
 
 </LinearLayout>

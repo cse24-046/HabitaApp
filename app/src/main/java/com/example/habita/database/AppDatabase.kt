@@ -4,8 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.example.habita.utils.Converters
 
-@Database(entities = [User::class, Listing::class, Booking::class, Message::class, Preference::class], version = 9, exportSchema = false)
+@Database(entities = [User::class, Listing::class, Booking::class, Message::class, Preference::class], version = 11, exportSchema = false)
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun listingDao(): ListingDao
     abstract fun bookingDao(): BookingDao

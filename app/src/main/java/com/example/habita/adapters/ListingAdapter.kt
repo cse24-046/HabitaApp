@@ -38,9 +38,9 @@ class ListingAdapter(
         holder.txtListingPrice.text = "P${listing.price} / month"
         holder.txtListingLocation.text = listing.location
         
-        // Using high quality/AI generated image if available
-        if (listing.imageRes != 0) {
-            holder.imgListing.setImageResource(listing.imageRes)
+        // Using high quality/AI generated main image
+        if (listing.mainImage != 0) {
+            holder.imgListing.setImageResource(listing.mainImage)
         } else {
             holder.imgListing.setImageResource(R.mipmap.ic_launcher)
         }
@@ -48,7 +48,7 @@ class ListingAdapter(
         // Show RESERVED badge if booked
         if (listing.status == "RESERVED") {
             holder.txtStatusBadge.visibility = View.VISIBLE
-            holder.itemView.alpha = 0.7f
+            holder.itemView.alpha = 0.6f
         } else {
             holder.txtStatusBadge.visibility = View.GONE
             holder.itemView.alpha = 1.0f

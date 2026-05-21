@@ -37,6 +37,13 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var notificationHelper: NotificationHelper
     private val calendar = Calendar.getInstance()
 
+    private lateinit var locationSpinner: Spinner
+    private lateinit var houseTypeSpinner: Spinner
+    private lateinit var priceSlider: RangeSlider
+    private lateinit var searchBar: EditText
+    private lateinit var etPreferredDate: EditText
+    private lateinit var switchLock: SwitchCompat
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -48,12 +55,13 @@ class HomeActivity : AppCompatActivity() {
         recyclerListings = findViewById(R.id.recyclerListings)
         recyclerListings.layoutManager = LinearLayoutManager(this)
 
-        val locationSpinner = findViewById<Spinner>(R.id.locationSpinner)
-        val houseTypeSpinner = findViewById<Spinner>(R.id.houseTypeSpinner)
-        val priceSlider = findViewById<RangeSlider>(R.id.priceRangeSlider)
-        val searchBar = findViewById<EditText>(R.id.searchBar)
-        val etDate = findViewById<EditText>(R.id.etPreferredDate)
-        val switchLock = findViewById<SwitchCompat>(R.id.switchLockPreferences)
+        // Initialize UI Components
+        locationSpinner = findViewById(R.id.locationSpinner)
+        houseTypeSpinner = findViewById(R.id.houseTypeSpinner)
+        priceSlider = findViewById(R.id.priceRangeSlider)
+        searchBar = findViewById(R.id.searchBar)
+        etPreferredDate = findViewById(R.id.etPreferredDate)
+        switchLock = findViewById(R.id.switchLockPreferences)
 
         val locations = resources.getStringArray(R.array.locations_array).toMutableList().apply { add(0, "Any") }
         locationSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, locations)
@@ -61,13 +69,13 @@ class HomeActivity : AppCompatActivity() {
         val houseTypes = resources.getStringArray(R.array.house_types_array).toMutableList().apply { add(0, "Any") }
         houseTypeSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, houseTypes)
 
-        // Apply Locked Preferences
+        // Load saved preferences
         val isLocked = sharedPref.getBoolean("isLocked", false)
         switchLock.isChecked = isLocked
         priceSlider.setValues(sharedPref.getFloat("minPrice", 0f), sharedPref.getFloat("maxPrice", 10000f))
         locationSpinner.setSelection(locations.indexOf(sharedPref.getString("location", "Any")).coerceAtLeast(0))
         houseTypeSpinner.setSelection(houseTypes.indexOf(sharedPref.getString("houseType", "Any")).coerceAtLeast(0))
-        etDate.setText(sharedPref.getString("prefDate", ""))
+        etPreferredDate.setText(sharedPref.getString("prefDate", ""))
 
         if (isLocked) disableControls()
 
@@ -75,13 +83,15 @@ class HomeActivity : AppCompatActivity() {
             calendar.set(Calendar.YEAR, year)
             calendar.set(Calendar.MONTH, month)
             calendar.set(Calendar.DAY_OF_MONTH, day)
-            etDate.setText(SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(calendar.time))
+            val format = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+            etPreferredDate.setText(format.format(calendar.time))
             applyFilters()
         }
 
-        etDate.setOnClickListener {
+        etPreferredDate.setOnClickListener {
             if (!switchLock.isChecked) {
-                DatePickerDialog(this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+                DatePickerDialog(this, dateSetListener,
+                    calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
             }
         }
 
@@ -98,7 +108,7 @@ class HomeActivity : AppCompatActivity() {
             dao.getAllListings().collect { listings ->
                 allListings = listings
                 applyFilters()
-                checkForNewMatches(listings)
+                if (isLocked) checkForNewMatches(listings)
             }
         }
 
@@ -119,7 +129,7 @@ class HomeActivity : AppCompatActivity() {
                 putFloat("maxPrice", priceSlider.values[1])
                 putString("location", locationSpinner.selectedItem.toString())
                 putString("houseType", houseTypeSpinner.selectedItem.toString())
-                putString("prefDate", etDate.text.toString())
+                putString("prefDate", etPreferredDate.text.toString())
                 putBoolean("isLocked", locked)
                 apply()
             }
@@ -130,29 +140,23 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun disableControls() {
-        findViewById<Spinner>(R.id.locationSpinner).isEnabled = false
-        findViewById<Spinner>(R.id.houseTypeSpinner).isEnabled = false
-        findViewById<RangeSlider>(R.id.priceRangeSlider).isEnabled = false
-        findViewById<EditText>(R.id.etPreferredDate).isEnabled = false
+        locationSpinner.isEnabled = false
+        houseTypeSpinner.isEnabled = false
+        priceSlider.isEnabled = false
+        etPreferredDate.isEnabled = false
     }
 
     private fun enableControls() {
-        findViewById<Spinner>(R.id.locationSpinner).isEnabled = true
-        findViewById<Spinner>(R.id.houseTypeSpinner).isEnabled = true
-        findViewById<RangeSlider>(R.id.priceRangeSlider).isEnabled = true
-        findViewById<EditText>(R.id.etPreferredDate).isEnabled = true
+        locationSpinner.isEnabled = true
+        houseTypeSpinner.isEnabled = true
+        priceSlider.isEnabled = true
+        etPreferredDate.isEnabled = true
     }
 
     private fun applyFilters() {
-        val searchBar = findViewById<EditText>(R.id.searchBar)
-        val priceSlider = findViewById<RangeSlider>(R.id.priceRangeSlider)
-        val locationSpinner = findViewById<Spinner>(R.id.locationSpinner)
-        val houseTypeSpinner = findViewById<Spinner>(R.id.houseTypeSpinner)
-        val etPreferredDate = findViewById<EditText>(R.id.etPreferredDate)
-
         val query = searchBar.text.toString().lowercase()
-        val min = priceSlider.values[0].toInt()
-        val max = priceSlider.values[1].toInt()
+        val min = if (priceSlider.values.isNotEmpty()) priceSlider.values[0].toInt() else 0
+        val max = if (priceSlider.values.size > 1) priceSlider.values[1].toInt() else 10000
         val loc = locationSpinner.selectedItem?.toString() ?: "Any"
         val type = houseTypeSpinner.selectedItem?.toString() ?: "Any"
         val date = etPreferredDate.text.toString()
@@ -164,10 +168,10 @@ class HomeActivity : AppCompatActivity() {
             (type == "Any" || listing.houseType == type) &&
             (date.isEmpty() || listing.availabilityDate.contains(date, ignoreCase = true))
         }
-        updateUI(filtered)
+        updateRecyclerView(filtered)
     }
 
-    private fun updateUI(newList: List<Listing>) {
+    private fun updateRecyclerView(newList: List<Listing>) {
         recyclerListings.adapter = ListingAdapter(newList, 
             onItemClick = { listing ->
                 if (listing.status == "RESERVED") {
@@ -194,29 +198,30 @@ class HomeActivity : AppCompatActivity() {
         val viewPager = dialog.findViewById<ViewPager2>(R.id.viewPagerImages)
         val btnClose = dialog.findViewById<Button>(R.id.btnClose)
         
+        val layout = btnClose.parent as LinearLayout
         val btnViewDetails = Button(this).apply {
             text = getString(R.string.view_full_details)
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = 8 }
         }
-        (btnClose.parent as LinearLayout).addView(btnViewDetails, 1)
+        layout.addView(btnViewDetails, 0)
 
-        val sampleImages = if (listing.imageRes != 0) {
-            listOf(listing.imageRes, android.R.drawable.ic_menu_gallery, android.R.drawable.ic_menu_camera)
+        // Fixed: Use imageList or mainImage correctly instead of imageRes
+        val sliderImages = if (listing.imageList.isNotEmpty()) {
+            listing.imageList
+        } else if (listing.mainImage != 0) {
+            listOf(listing.mainImage, android.R.drawable.ic_menu_gallery, android.R.drawable.ic_menu_camera)
         } else {
             listOf(R.mipmap.ic_launcher, android.R.drawable.ic_menu_gallery, android.R.drawable.ic_menu_camera)
         }
 
-        viewPager.adapter = ImageSliderAdapter(sampleImages)
+        viewPager.adapter = ImageSliderAdapter(sliderImages)
         TabLayoutMediator(dialog.findViewById(R.id.tabDots), viewPager) { _, _ -> }.attach()
 
         btnClose.setOnClickListener { dialog.dismiss() }
         btnViewDetails.setOnClickListener {
             dialog.dismiss()
             startActivity(Intent(this, DetailsActivity::class.java).apply {
-                putExtra("title", listing.title)
-                putExtra("price", listing.price)
-                putExtra("location", listing.location)
-                putExtra("date", listing.availabilityDate)
+                putExtra("listingId", listing.id)
             })
         }
         dialog.show()
@@ -226,10 +231,20 @@ class HomeActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val loc = sharedPref.getString("location", "Any")
         val type = sharedPref.getString("houseType", "Any")
+        
         if (loc == "Any" && type == "Any") return
-        val matches = listings.filter { (loc == "Any" || it.location == loc) && (type == "Any" || it.houseType == type) && it.status == "Available" }
+
+        val matches = listings.filter { 
+            (loc == "Any" || it.location == loc) && 
+            (type == "Any" || it.houseType == type) &&
+            it.status == "Available"
+        }
+        
         if (matches.isNotEmpty()) {
-            notificationHelper.showMatchNotification("Matches Found!", "We found ${matches.size} homes matching your criteria.")
+            notificationHelper.showMatchNotification(
+                "Matches Found!",
+                "We found ${matches.size} homes matching your criteria."
+            )
         }
     }
 }

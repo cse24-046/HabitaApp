@@ -8,18 +8,27 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
 import com.example.habita.R
+import com.example.habita.adapters.ImageSliderAdapter
 import com.example.habita.database.AppDatabase
-import com.example.habita.database.Booking
+import com.example.habita.database.Listing
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class DetailsActivity : AppCompatActivity() {
+    private lateinit var database: AppDatabase
+    private var currentListing: Listing? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details)
 
-        val database = AppDatabase.getDatabase(this)
-        
+        database = AppDatabase.getDatabase(this)
+        val listingId = intent.getIntExtra("listingId", -1)
+
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
         val txtTitle = findViewById<TextView>(R.id.txtDetailsTitle)
         val txtPrice = findViewById<TextView>(R.id.txtDetailsPrice)
@@ -27,56 +36,58 @@ class DetailsActivity : AppCompatActivity() {
         val txtDate = findViewById<TextView>(R.id.txtDetailsDate)
         val btnReserve = findViewById<Button>(R.id.btnReserve)
         val btnChat = findViewById<Button>(R.id.btnChat)
+        val viewPager = findViewById<ViewPager2>(R.id.viewPagerDetails)
+        val tabLayout = findViewById<TabLayout>(R.id.tabDotsDetails)
 
-        // Bottom Navigation Icons
-        findViewById<ImageButton>(R.id.navHome).setOnClickListener {
-            startActivity(Intent(this, HomeActivity::class.java))
-            finish()
-        }
-        findViewById<ImageButton>(R.id.navSaved).setOnClickListener {
-            startActivity(Intent(this, SavedActivity::class.java))
-            finish()
-        }
-        findViewById<ImageButton>(R.id.navChat).setOnClickListener {
-            startActivity(Intent(this, ChatActivity::class.java))
-            finish()
-        }
-        findViewById<ImageButton>(R.id.navProfile).setOnClickListener {
-            startActivity(Intent(this, ProfileActivity::class.java))
-            finish()
+        // Navigation
+        findViewById<ImageButton>(R.id.navHome).setOnClickListener { startActivity(Intent(this, HomeActivity::class.java)); finish() }
+        findViewById<ImageButton>(R.id.navSaved).setOnClickListener { startActivity(Intent(this, SavedActivity::class.java)); finish() }
+        findViewById<ImageButton>(R.id.navChat).setOnClickListener { startActivity(Intent(this, ChatActivity::class.java)); finish() }
+        findViewById<ImageButton>(R.id.navProfile).setOnClickListener { startActivity(Intent(this, ProfileActivity::class.java)); finish() }
+
+        lifecycleScope.launch {
+            val listingsList = database.listingDao().getAllListings().first()
+            val listing = listingsList.find { it.id == listingId }
+            if (listing != null) {
+                currentListing = listing
+                txtTitle.text = listing.title
+                txtPrice.text = "P${listing.price} / month"
+                txtLocation.text = listing.location
+                txtDate.text = "Available From: ${listing.availabilityDate}"
+
+                val images = if (listing.imageList.isNotEmpty()) listing.imageList 
+                             else listOf(listing.mainImage, android.R.drawable.ic_menu_gallery)
+                
+                viewPager.adapter = ImageSliderAdapter(images)
+                TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
+                
+                if (listing.status == "RESERVED") {
+                    btnReserve.isEnabled = false
+                    btnReserve.text = getString(R.string.reserved)
+                }
+            } else {
+                Toast.makeText(this@DetailsActivity, "Listing not found", Toast.LENGTH_SHORT).show()
+                finish()
+            }
         }
 
-        val title = intent.getStringExtra("title") ?: ""
-        val price = intent.getIntExtra("price", 0)
-        val location = intent.getStringExtra("location") ?: ""
-        val date = intent.getStringExtra("date") ?: ""
-
-        txtTitle.text = title
-        txtPrice.text = "P$price / month"
-        txtLocation.text = location
-        txtDate.text = "Available: $date"
-
-        btnBack.setOnClickListener {
-            finish()
-        }
+        btnBack.setOnClickListener { finish() }
 
         btnReserve.setOnClickListener {
-            lifecycleScope.launch {
-                val reference = "HB" + System.currentTimeMillis().toString().takeLast(6)
-                val booking = Booking(title = title, reference = reference, status = "Confirmed")
-                database.bookingDao().saveBooking(booking)
-                
-                val intent = Intent(this@DetailsActivity, PaymentActivity::class.java)
-                intent.putExtra("title", title)
-                intent.putExtra("price", price)
+            currentListing?.let {
+                val intent = Intent(this, PaymentActivity::class.java)
+                intent.putExtra("title", it.title)
+                intent.putExtra("price", it.price)
                 startActivity(intent)
             }
         }
 
         btnChat.setOnClickListener {
-            val intent = Intent(this, ChatDetailActivity::class.java)
-            intent.putExtra("partnerName", "Landlord - $title")
-            startActivity(intent)
+            currentListing?.let {
+                val intent = Intent(this, ChatDetailActivity::class.java)
+                intent.putExtra("partnerName", it.location + " Provider")
+                startActivity(intent)
+            }
         }
     }
 }

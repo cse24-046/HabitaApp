@@ -14,92 +14,133 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/btnBack"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_menu_revert"
-                app:tint="#1F1F39"
-                android:contentDescription="@string/back" />
-
-            <ImageView
-                android:id="@+id/imgDetails"
+            <!-- AI Image Slider -->
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
-                android:layout_marginTop="8dp"
-                android:scaleType="centerCrop"
-                android:src="@mipmap/ic_launcher" />
+                android:layout_height="320dp">
 
-            <TextView
-                android:id="@+id/txtDetailsTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:text="Listing Title"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="#1F1F39" />
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/viewPagerDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
-            <TextView
-                android:id="@+id/txtDetailsPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="P1200 / month"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#6C4DFF" />
+                <ImageButton
+                    android:id="@+id/btnBack"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/bg_card"
+                    android:src="@android:drawable/ic_menu_revert"
+                    app:tint="#1F1F39"
+                    android:contentDescription="@string/back" />
 
-            <TextView
-                android:id="@+id/txtDetailsLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Location"
-                android:textSize="15sp"
-                android:textColor="#777799" />
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabDotsDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="12dp"
+                    app:tabBackground="@android:drawable/presence_online"
+                    app:tabGravity="center"
+                    app:tabIndicatorHeight="0dp"
+                    app:tabMaxWidth="10dp"
+                    app:tabRippleColor="@null" />
+            </RelativeLayout>
 
-            <TextView
-                android:id="@+id/txtDetailsDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Available Date"
-                android:textSize="15sp"
-                android:textColor="#4CAF50" />
-
-            <TextView
-                android:id="@+id/txtDescription"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:text="This accommodation is suitable for students looking for a safe, affordable and convenient place to stay near campus."
-                android:textSize="15sp"
-                android:textColor="#555570" />
+                android:orientation="vertical"
+                android:padding="20dp">
 
-            <Button
-                android:id="@+id/btnReserve"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/bg_primary_button"
-                android:text="Reserve Now"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/txtDetailsTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Premium Housing"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#1F1F39" />
 
-            <Button
-                android:id="@+id/btnChat"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="12dp"
-                android:text="Chat with Landlord"
-                android:textAllCaps="false" />
+                <TextView
+                    android:id="@+id/txtDetailsPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="P1200 / month"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#6C4DFF" />
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEEE"
+                    android:layout_marginVertical="20dp" />
+
+                <TextView
+                    android:id="@+id/txtDetailsLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Location"
+                    android:textSize="16sp"
+                    android:textColor="#777799"
+                    app:drawableStartCompat="@android:drawable/ic_menu_mylocation"
+                    android:drawablePadding="12dp" />
+
+                <TextView
+                    android:id="@+id/txtDetailsDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Available From"
+                    android:textSize="16sp"
+                    android:textColor="#4CAF50"
+                    app:drawableStartCompat="@android:drawable/ic_menu_today"
+                    android:drawablePadding="12dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:text="Accommodation Description"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#1F1F39" />
+
+                <TextView
+                    android:id="@+id/txtDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Experience modern living in this AI-curated student home. Features high-quality finishes, optimized layouts for studying, and premium security."
+                    android:textSize="15sp"
+                    android:textColor="#555570"
+                    android:lineSpacingExtra="6dp" />
+
+                <Button
+                    android:id="@+id/btnReserve"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="40dp"
+                    android:background="@drawable/bg_primary_button"
+                    android:text="Reserve Now"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnChat"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="12dp"
+                    android:text="Chat with Provider"
+                    android:textAllCaps="false"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

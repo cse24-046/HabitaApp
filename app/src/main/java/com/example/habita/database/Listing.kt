@@ -2,8 +2,11 @@ package com.example.habita.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.example.habita.utils.Converters
 
 @Entity(tableName = "listings")
+@TypeConverters(Converters::class)
 data class Listing(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val title: String,
@@ -13,5 +16,6 @@ data class Listing(
     val houseType: String,
     val isSaved: Boolean = false,
     val status: String = "Available", // "Available" or "RESERVED"
-    val imageRes: Int = 0
+    val mainImage: Int = 0,
+    val imageList: List<Int> = emptyList() // For AI generated image slides
 )

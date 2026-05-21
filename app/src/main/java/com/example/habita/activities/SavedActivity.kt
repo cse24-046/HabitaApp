@@ -52,7 +52,7 @@ class SavedActivity : AppCompatActivity() {
                 recyclerSaved.adapter = ListingAdapter(savedListings,
                     onItemClick = { listing ->
                         if (listing.status == "RESERVED") {
-                            Toast.makeText(this@SavedActivity, "This home is already reserved.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@SavedActivity, "This home is reserved.", Toast.LENGTH_SHORT).show()
                         } else {
                             showImageSliderDialog(listing)
                         }
@@ -74,34 +74,39 @@ class SavedActivity : AppCompatActivity() {
         dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
         val viewPager = dialog.findViewById<ViewPager2>(R.id.viewPagerImages)
+        val tabLayout = dialog.findViewById<TabLayout>(R.id.tabDots)
         val btnClose = dialog.findViewById<Button>(R.id.btnClose)
         
         val layout = btnClose.parent as LinearLayout
         val btnViewDetails = Button(this).apply {
             text = getString(R.string.view_full_details)
-            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = 8 }
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { topMargin = 8 }
         }
-        layout.addView(btnViewDetails, layout.indexOfChild(btnClose))
+        layout.addView(btnViewDetails, 0)
 
-        val sampleImages = if (listing.imageRes != 0) {
-            listOf(listing.imageRes, android.R.drawable.ic_menu_gallery)
+        // Fix: Use imageList or mainImage instead of imageRes
+        val sliderImages = if (listing.imageList.isNotEmpty()) {
+            listing.imageList
+        } else if (listing.mainImage != 0) {
+            listOf(listing.mainImage, android.R.drawable.ic_menu_gallery, android.R.drawable.ic_menu_camera)
         } else {
-            listOf(R.mipmap.ic_launcher, android.R.drawable.ic_menu_camera)
+            listOf(R.mipmap.ic_launcher, android.R.drawable.ic_menu_gallery, android.R.drawable.ic_menu_camera)
         }
 
-        viewPager.adapter = ImageSliderAdapter(sampleImages)
-        TabLayoutMediator(dialog.findViewById(R.id.tabDots), viewPager) { _, _ -> }.attach()
+        viewPager.adapter = ImageSliderAdapter(sliderImages)
+        TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
 
         btnClose.setOnClickListener { dialog.dismiss() }
         btnViewDetails.setOnClickListener {
             dialog.dismiss()
             startActivity(Intent(this, DetailsActivity::class.java).apply {
-                putExtra("title", listing.title)
-                putExtra("price", listing.price)
-                putExtra("location", listing.location)
-                putExtra("date", listing.availabilityDate)
+                putExtra("listingId", listing.id)
             })
         }
+
         dialog.show()
     }
 }

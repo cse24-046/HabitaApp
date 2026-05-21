@@ -17,6 +17,9 @@ interface ListingDao {
     @Update
     suspend fun updateListing(listing: Listing)
 
+    @Query("SELECT * FROM listings WHERE id = :id LIMIT 1")
+    suspend fun getListingById(id: Int): Listing?
+
     @Query("SELECT * FROM listings WHERE title = :title LIMIT 1")
     suspend fun getListingByTitle(title: String): Listing?
 
