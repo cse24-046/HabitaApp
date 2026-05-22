@@ -26,7 +26,7 @@ class PaymentActivity : AppCompatActivity() {
         val etExpiry = findViewById<EditText>(R.id.editExpiry)
         val etCVV = findViewById<EditText>(R.id.editCVV)
 
-        val title = intent.getStringExtra("title") ?: "Premium Housing"
+        val title = intent.getStringExtra("title") ?: "Housing"
         val price = intent.getIntExtra("price", 0)
         val deposit = price / 2
 

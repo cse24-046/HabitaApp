@@ -59,7 +59,7 @@
                     android:id="@+id/txtDetailsTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Premium Housing"
+                    android:text="Housing Details"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     android:textColor="@color/text_primary" />

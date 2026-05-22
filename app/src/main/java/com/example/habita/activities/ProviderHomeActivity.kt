@@ -56,9 +56,10 @@ class ProviderHomeActivity : AppCompatActivity() {
         // Set up list and stats observer
         lifecycleScope.launch {
             database.listingDao().getAllListings().collectLatest { listings ->
-                txtListingCount.text = listings.size.toString()
+                val providerListings = listings.filter { it.providerId == userId }
+                txtListingCount.text = providerListings.size.toString()
                 recyclerListings.adapter = ListingAdapter(
-                    listings = listings,
+                    listings = providerListings,
                     onItemClick = { listing ->
                         Toast.makeText(this@ProviderHomeActivity, "${listing.title}: Price: P${listing.price}, Status: ${listing.status}", Toast.LENGTH_SHORT).show()
                     },

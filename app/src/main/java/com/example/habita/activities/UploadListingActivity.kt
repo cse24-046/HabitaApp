@@ -1,6 +1,7 @@
 package com.example.habita.activities
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -78,6 +79,9 @@ class UploadListingActivity : AppCompatActivity() {
             }
 
             lifecycleScope.launch {
+                val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+                val providerId = sharedPref.getString("userId", null)
+
                 // Select random images so it matches standard dummy image sets beautifully
                 val dummyImages = listOf(
                     android.R.drawable.ic_menu_gallery,
@@ -98,7 +102,8 @@ class UploadListingActivity : AppCompatActivity() {
                     houseType = houseType,
                     status = "Available",
                     mainImage = mainImg,
-                    imageList = extraImgs
+                    imageList = extraImgs,
+                    providerId = providerId
                 )
 
                 database.listingDao().insertListing(newListing)
