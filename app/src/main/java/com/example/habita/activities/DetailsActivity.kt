@@ -46,7 +46,7 @@ class DetailsActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.navProfile).setOnClickListener { startActivity(Intent(this, ProfileActivity::class.java)); finish() }
 
         lifecycleScope.launch {
-            val listingsList = database.listingDao().getAllListings().first()
+            val listingsList = database.listingDao().getSampleListings().first()
             val listing = listingsList.find { it.id == listingId }
             if (listing != null) {
                 currentListing = listing

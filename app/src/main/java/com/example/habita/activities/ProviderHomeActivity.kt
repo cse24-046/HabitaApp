@@ -53,9 +53,10 @@ class ProviderHomeActivity : AppCompatActivity() {
             }
         }
 
-        // Set up list and stats observer
+        // Set up list and stats observer (provider-owned listings only)
         lifecycleScope.launch {
-            database.listingDao().getAllListings().collectLatest { listings ->
+            val providerId = userId ?: return@launch
+            database.listingDao().getProviderListings(providerId).collectLatest { listings ->
                 txtListingCount.text = listings.size.toString()
                 recyclerListings.adapter = ListingAdapter(
                     listings = listings,

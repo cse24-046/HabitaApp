@@ -52,6 +52,6 @@
     <string name="register_title">Create Account</string>
 
     <string name="desc_title">Accommodation Description</string>
-    <string name="ai_desc_default">Experience modern living in this beautifully curated student home. Features high-quality finishes, optimized layouts for studying, and premium security.</string>
+    <string name="listing_desc_default">Experience modern living in this student home. Features quality finishes, layouts suited for studying, and secure access.</string>
     <string name="chat_provider">Chat with Provider</string>
 </resources>
