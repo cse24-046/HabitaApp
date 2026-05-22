@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.habita.R
@@ -46,14 +46,25 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val userRole = sharedPref.getString("userRole", "student")
+        
+        // Prevent provider from overlapping to student user area
+        if (userRole == "provider") {
+            startActivity(Intent(this, ProviderHomeActivity::class.java))
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_home)
 
         database = AppDatabase.getDatabase(this)
         notificationHelper = NotificationHelper(this)
-        val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
 
         recyclerListings = findViewById(R.id.recyclerListings)
-        recyclerListings.layoutManager = LinearLayoutManager(this)
+        // Listings into grids 2 columns
+        recyclerListings.layoutManager = GridLayoutManager(this, 2)
 
         // Initialize UI Components
         locationSpinner = findViewById(R.id.locationSpinner)
@@ -102,7 +113,8 @@ class HomeActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             val dao = database.listingDao()
-            if (dao.getAllListings().first().size < 65) {
+            // Ensure all listings available in student home
+            if (dao.getAllListings().first().size < 10) { 
                 dao.insertAll(SampleData.get65Listings())
             }
             dao.getAllListings().collect { listings ->
@@ -200,15 +212,11 @@ class HomeActivity : AppCompatActivity() {
         dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         val viewPager = dialog.findViewById<ViewPager2>(R.id.viewPagerImages)
         val btnClose = dialog.findViewById<Button>(R.id.btnClose)
-        
-        val layout = btnClose.parent as LinearLayout
-        val btnViewDetails = Button(this).apply {
-            text = getString(R.string.view_full_details)
-            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = 8 }
-        }
-        layout.addView(btnViewDetails, 0)
+        val btnViewDetails = dialog.findViewById<Button>(R.id.btnDialogViewDetails)
 
-        // Fixed: Use imageList or mainImage correctly instead of imageRes
+        // Removed the programmatic creation of grey button, using the blue one from XML
+        btnViewDetails.visibility = View.VISIBLE
+
         val sliderImages = if (listing.imageList.isNotEmpty()) {
             listing.imageList
         } else if (listing.mainImage != 0) {

@@ -28,10 +28,12 @@
                 android:layout_centerVertical="true">
 
                 <ImageView
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
                     android:layout_marginEnd="12dp"
                     android:src="@drawable/logo"
+                    android:scaleType="fitCenter"
+                    android:background="@android:color/transparent"
                     android:contentDescription="Habita Logo" />
 
                 <LinearLayout
@@ -44,7 +46,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Habita Hub"
-                        android:textSize="26sp"
+                        android:textSize="22sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_primary" />
 
@@ -59,28 +61,40 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/btnProviderChat"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_toStartOf="@id/btnProviderLogout"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="8dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/stat_notify_chat"
-                app:tint="@color/color_primary"
-                android:contentDescription="Chat Messages" />
-
-            <ImageButton
-                android:id="@+id/btnProviderLogout"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_menu_close_clear_cancel"
-                app:tint="@color/color_alert_reserved"
-                android:contentDescription="Log Out" />
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/btnProviderChat"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/stat_notify_chat"
+                    app:tint="@color/color_primary"
+                    android:contentDescription="Chat Messages" />
+
+                <ImageButton
+                    android:id="@+id/btnProviderProfile"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_myplaces"
+                    app:tint="@color/color_primary"
+                    android:contentDescription="Profile" />
+
+                <ImageButton
+                    android:id="@+id/btnProviderLogout"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    app:tint="@color/color_alert_reserved"
+                    android:contentDescription="Log Out" />
+            </LinearLayout>
         </RelativeLayout>
 
         <!-- STATS / OVERVIEW CARDS -->

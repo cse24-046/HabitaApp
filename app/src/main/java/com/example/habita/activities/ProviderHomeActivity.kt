@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.habita.R
 import com.example.habita.adapters.ListingAdapter
@@ -33,17 +33,22 @@ class ProviderHomeActivity : AppCompatActivity() {
 
         // Bind views
         recyclerListings = findViewById(R.id.recyclerProviderListings)
-        recyclerListings.layoutManager = LinearLayoutManager(this)
+        recyclerListings.layoutManager = GridLayoutManager(this, 2)
         txtListingCount = findViewById(R.id.txtListingCount)
         txtWelcomeSubtitle = findViewById(R.id.providerNameSubtitle)
 
         val btnLogout = findViewById<ImageButton>(R.id.btnProviderLogout)
         val btnChat = findViewById<ImageButton>(R.id.btnProviderChat)
+        val btnProfile = findViewById<ImageButton>(R.id.btnProviderProfile)
         val cardQuickAdd = findViewById<CardView>(R.id.cardQuickAdd)
         val fabAdd = findViewById<FloatingActionButton>(R.id.fabAddListing)
 
         btnChat.setOnClickListener {
             startActivity(Intent(this, ChatActivity::class.java))
+        }
+
+        btnProfile.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
         }
 
         // Load provider userId

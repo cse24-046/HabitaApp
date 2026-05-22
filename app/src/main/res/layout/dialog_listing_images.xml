@@ -28,6 +28,8 @@
         android:layout_height="wrap_content"
         android:text="@string/view_full_details"
         android:layout_marginTop="16dp"
+        android:backgroundTint="@color/color_primary"
+        android:textColor="@color/white"
         style="@style/Widget.MaterialComponents.Button" />
 
     <Button
