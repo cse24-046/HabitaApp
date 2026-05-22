@@ -174,11 +174,7 @@ class HomeActivity : AppCompatActivity() {
     private fun updateRecyclerView(newList: List<Listing>) {
         recyclerListings.adapter = ListingAdapter(newList, 
             onItemClick = { listing ->
-                if (listing.status == "RESERVED") {
-                    Toast.makeText(this, "This home is already reserved and details are private.", Toast.LENGTH_SHORT).show()
-                } else {
-                    showImageSliderDialog(listing)
-                }
+                showImageSliderDialog(listing)
             },
             onFavoriteClick = { listing ->
                 lifecycleScope.launch {

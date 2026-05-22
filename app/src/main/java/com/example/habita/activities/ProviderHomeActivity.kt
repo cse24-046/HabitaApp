@@ -38,8 +38,13 @@ class ProviderHomeActivity : AppCompatActivity() {
         txtWelcomeSubtitle = findViewById(R.id.providerNameSubtitle)
 
         val btnLogout = findViewById<ImageButton>(R.id.btnProviderLogout)
+        val btnChat = findViewById<ImageButton>(R.id.btnProviderChat)
         val cardQuickAdd = findViewById<CardView>(R.id.cardQuickAdd)
         val fabAdd = findViewById<FloatingActionButton>(R.id.fabAddListing)
+
+        btnChat.setOnClickListener {
+            startActivity(Intent(this, ChatActivity::class.java))
+        }
 
         // Load provider name
         val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
@@ -61,7 +66,9 @@ class ProviderHomeActivity : AppCompatActivity() {
                 recyclerListings.adapter = ListingAdapter(
                     listings = providerListings,
                     onItemClick = { listing ->
-                        Toast.makeText(this@ProviderHomeActivity, "${listing.title}: Price: P${listing.price}, Status: ${listing.status}", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@ProviderHomeActivity, DetailsActivity::class.java)
+                        intent.putExtra("listingId", listing.id)
+                        startActivity(intent)
                     },
                     onFavoriteClick = { listing ->
                         lifecycleScope.launch {

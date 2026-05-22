@@ -46,6 +46,18 @@
             </LinearLayout>
 
             <ImageButton
+                android:id="@+id/btnProviderChat"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_toStartOf="@id/btnProviderLogout"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/stat_notify_chat"
+                app:tint="@color/color_primary"
+                android:contentDescription="Chat Messages" />
+
+            <ImageButton
                 android:id="@+id/btnProviderLogout"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
