@@ -3,6 +3,7 @@ package com.example.habita.activities
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -76,24 +77,19 @@ class SavedActivity : AppCompatActivity() {
         val viewPager = dialog.findViewById<ViewPager2>(R.id.viewPagerImages)
         val tabLayout = dialog.findViewById<TabLayout>(R.id.tabDots)
         val btnClose = dialog.findViewById<Button>(R.id.btnClose)
-        
-        val layout = btnClose.parent as LinearLayout
-        val btnViewDetails = Button(this).apply {
-            text = getString(R.string.view_full_details)
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { topMargin = 8 }
-        }
-        layout.addView(btnViewDetails, 0)
+        val btnViewDetails = dialog.findViewById<Button>(R.id.btnDialogViewDetails)
 
-        // Fix: Use imageList or mainImage instead of imageRes
-        val sliderImages = if (listing.imageList.isNotEmpty()) {
+        btnViewDetails.visibility = View.VISIBLE
+
+        val mainImg = listing.mainImage ?: R.mipmap.ic_launcher.toString()
+        val sliderImages: List<String> = if (listing.imageList.isNotEmpty()) {
             listing.imageList
-        } else if (listing.mainImage != 0) {
-            listOf(listing.mainImage, android.R.drawable.ic_menu_gallery, android.R.drawable.ic_menu_camera)
         } else {
-            listOf(R.mipmap.ic_launcher, android.R.drawable.ic_menu_gallery, android.R.drawable.ic_menu_camera)
+            listOf(
+                mainImg,
+                android.R.drawable.ic_menu_gallery.toString(),
+                android.R.drawable.ic_menu_camera.toString()
+            )
         }
 
         viewPager.adapter = ImageSliderAdapter(sliderImages)

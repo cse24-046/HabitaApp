@@ -58,12 +58,14 @@ class ProviderHomeActivity : AppCompatActivity() {
         // Set up list and stats observer
         lifecycleScope.launch {
             database.listingDao().getAllListings().collectLatest { listings ->
+                // Filtering listings uploaded by this provider
                 val providerListings = listings.filter { it.providerId == userId }
                 txtListingCount.text = providerListings.size.toString()
                 recyclerListings.adapter = ListingAdapter(
                     listings = providerListings,
                     onItemClick = { listing ->
-                        val intent = Intent(this@ProviderHomeActivity, DetailsActivity::class.java)
+                        // Allow provider to edit the listing they uploaded
+                        val intent = Intent(this@ProviderHomeActivity, UploadListingActivity::class.java)
                         intent.putExtra("listingId", listing.id)
                         startActivity(intent)
                     },

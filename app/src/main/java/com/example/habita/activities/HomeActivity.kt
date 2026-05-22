@@ -114,6 +114,7 @@ class HomeActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val dao = database.listingDao()
             // Ensure all 65 listings are available - populate if low count
+            // We use first() to check the current state once before collecting
             if (dao.getAllListings().first().size < 60) { 
                 dao.insertAll(SampleData.get65Listings())
             }
@@ -211,12 +212,15 @@ class HomeActivity : AppCompatActivity() {
 
         btnViewDetails.visibility = View.VISIBLE
 
-        val sliderImages = if (listing.imageList.isNotEmpty()) {
+        val mainImg = listing.mainImage ?: R.mipmap.ic_launcher.toString()
+        val sliderImages: List<String> = if (listing.imageList.isNotEmpty()) {
             listing.imageList
-        } else if (listing.mainImage != null) {
-            listOf(listing.mainImage!!, android.R.drawable.ic_menu_gallery.toString())
         } else {
-            listOf(R.mipmap.ic_launcher.toString(), android.R.drawable.ic_menu_gallery.toString())
+            listOf(
+                mainImg,
+                android.R.drawable.ic_menu_gallery.toString(),
+                android.R.drawable.ic_menu_camera.toString()
+            )
         }
 
         viewPager.adapter = ImageSliderAdapter(sliderImages)

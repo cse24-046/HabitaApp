@@ -3,6 +3,7 @@ package com.example.habita.activities
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -21,22 +22,24 @@ class UploadListingActivity : AppCompatActivity() {
     private lateinit var database: AppDatabase
     private val calendar = Calendar.getInstance()
     private lateinit var etDate: EditText
-    private var selectedImageUri: android.net.Uri? = null
+    private var selectedImageUri: Uri? = null
+    private var isEditMode = false
+    private var editingListingId = -1
 
-    private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+    private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) {
             selectedImageUri = uri
             val txtImageName = findViewById<TextView>(R.id.txtUploadedImageName)
             val imgPreview = findViewById<ImageView>(R.id.imgUploadPreview)
             
-            // Persist permission to access this URI later (e.g. after app restart)
             try {
+                // Grant persistent access to the URI for later use
                 contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
 
-            txtImageName.text = "Selected: Property_Image_${System.currentTimeMillis() % 10000}.jpg"
+            txtImageName.text = "Selected Image"
             imgPreview.setImageURI(uri)
             imgPreview.visibility = View.VISIBLE
         }
@@ -47,6 +50,9 @@ class UploadListingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_upload_listing)
 
         database = AppDatabase.getDatabase(this)
+        
+        editingListingId = intent.getIntExtra("listingId", -1)
+        isEditMode = editingListingId != -1
 
         val etTitle = findViewById<EditText>(R.id.etUploadTitle)
         val etPrice = findViewById<EditText>(R.id.etUploadPrice)
@@ -56,8 +62,13 @@ class UploadListingActivity : AppCompatActivity() {
         val btnSubmit = findViewById<Button>(R.id.btnSubmitUpload)
         val btnBack = findViewById<ImageButton>(R.id.btnBackToDashboard)
         val btnSelectImage = findViewById<Button>(R.id.btnUploadSelectImage)
+        val txtHeaderTitle = findViewById<TextView>(R.id.txtHeaderTitle)
 
-        // Set up Spinners using the arrays in arrays.xml
+        if (isEditMode) {
+            btnSubmit.text = "Update Listing"
+            txtHeaderTitle.text = "Edit Property"
+        }
+
         val locations = resources.getStringArray(R.array.locations_array)
         val adapterLocation = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, locations)
         spinnerLocation.adapter = adapterLocation
@@ -66,7 +77,28 @@ class UploadListingActivity : AppCompatActivity() {
         val adapterHouseType = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, houseTypes)
         spinnerHouseType.adapter = adapterHouseType
 
-        // Set up DatePickerDialog
+        if (isEditMode) {
+            lifecycleScope.launch {
+                val listing = database.listingDao().getListingById(editingListingId)
+                listing?.let {
+                    etTitle.setText(it.title)
+                    etPrice.setText(it.price.toString())
+                    etDate.setText(it.availabilityDate)
+                    spinnerLocation.setSelection(locations.indexOf(it.location).coerceAtLeast(0))
+                    spinnerHouseType.setSelection(houseTypes.indexOf(it.houseType).coerceAtLeast(0))
+                    if (it.mainImage != null) {
+                        val imgPreview = findViewById<ImageView>(R.id.imgUploadPreview)
+                        try {
+                            val resId = it.mainImage!!.toIntOrNull()
+                            if (resId != null) imgPreview.setImageResource(resId)
+                            else imgPreview.setImageURI(Uri.parse(it.mainImage))
+                            imgPreview.visibility = View.VISIBLE
+                        } catch (e: Exception) {}
+                    }
+                }
+            }
+        }
+
         val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
             calendar.set(Calendar.YEAR, year)
             calendar.set(Calendar.MONTH, month)
@@ -81,12 +113,10 @@ class UploadListingActivity : AppCompatActivity() {
         }
 
         btnSelectImage.setOnClickListener {
-            selectImageLauncher.launch("image/*")
+            selectImageLauncher.launch(arrayOf("image/*"))
         }
 
-        btnBack.setOnClickListener {
-            finish()
-        }
+        btnBack.setOnClickListener { finish() }
 
         btnSubmit.setOnClickListener {
             val title = etTitle.text.toString().trim()
@@ -100,37 +130,37 @@ class UploadListingActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val price = priceStr.toIntOrNull()
-            if (price == null || price <= 0) {
-                Toast.makeText(this, "Please enter a valid price", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            val price = priceStr.toIntOrNull() ?: 0
 
             lifecycleScope.launch {
                 val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
                 val providerId = sharedPref.getString("userId", null)
 
-                // Use the URI if selected, otherwise a default resource string
-                val mainImg = selectedImageUri?.toString() ?: R.drawable.house_1.toString()
-                val extraImgs = if (selectedImageUri != null) listOf(mainImg) else listOf(
-                    R.drawable.house_1.toString(),
-                    R.drawable.house_inner_1.toString()
-                )
-
-                val newListing = Listing(
-                    title = title,
-                    price = price,
-                    location = location,
-                    availabilityDate = availabilityDate,
-                    houseType = houseType,
-                    status = "Available",
-                    mainImage = mainImg,
-                    imageList = extraImgs,
-                    providerId = providerId
-                )
-
-                database.listingDao().insertListing(newListing)
-                Toast.makeText(this@UploadListingActivity, "Listing Uploaded Successfully!", Toast.LENGTH_SHORT).show()
+                var mainImg: String? = selectedImageUri?.toString()
+                
+                if (isEditMode) {
+                    val existing = database.listingDao().getListingById(editingListingId)
+                    val updatedMainImg = mainImg ?: existing?.mainImage
+                    val updatedImgList = if (mainImg != null) listOf(mainImg) else existing?.imageList ?: emptyList()
+                    
+                    val updated = existing?.copy(
+                        title = title, price = price, location = location,
+                        houseType = houseType, availabilityDate = availabilityDate,
+                        mainImage = updatedMainImg, imageList = updatedImgList
+                    )
+                    if (updated != null) database.listingDao().updateListing(updated)
+                } else {
+                    val finalMainImg = mainImg ?: R.drawable.house_1.toString()
+                    val newListing = Listing(
+                        title = title, price = price, location = location,
+                        houseType = houseType, availabilityDate = availabilityDate,
+                        status = "Available", mainImage = finalMainImg,
+                        imageList = listOf(finalMainImg, R.drawable.house_inner_1.toString()),
+                        providerId = providerId
+                    )
+                    database.listingDao().insertListing(newListing)
+                }
+                Toast.makeText(this@UploadListingActivity, if (isEditMode) "Listing Updated" else "Listing Uploaded", Toast.LENGTH_SHORT).show()
                 finish()
             }
         }

@@ -27,7 +27,8 @@ class ChatListAdapter(
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         val chat = conversations[position]
-        holder.txtPartnerName.text = chat.providerName
+        // Updated to use partnerName from the Conversation data class
+        holder.txtPartnerName.text = chat.partnerName
         holder.txtLastMessage.text = chat.lastMessage
         holder.txtChatTime.text = chat.time
 
