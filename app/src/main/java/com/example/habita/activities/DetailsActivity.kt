@@ -40,7 +40,16 @@ class DetailsActivity : AppCompatActivity() {
         val tabLayout = findViewById<TabLayout>(R.id.tabDotsDetails)
 
         // Navigation
-        findViewById<ImageButton>(R.id.navHome).setOnClickListener { startActivity(Intent(this, HomeActivity::class.java)); finish() }
+        findViewById<ImageButton>(R.id.navHome).setOnClickListener { 
+            val sharedPref = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+            val role = sharedPref.getString("userRole", "student")
+            if (role == "provider") {
+                startActivity(Intent(this, ProviderHomeActivity::class.java))
+            } else {
+                startActivity(Intent(this, HomeActivity::class.java))
+            }
+            finish() 
+        }
         findViewById<ImageButton>(R.id.navSaved).setOnClickListener { startActivity(Intent(this, SavedActivity::class.java)); finish() }
         findViewById<ImageButton>(R.id.navChat).setOnClickListener { startActivity(Intent(this, ChatActivity::class.java)); finish() }
         findViewById<ImageButton>(R.id.navProfile).setOnClickListener { startActivity(Intent(this, ProfileActivity::class.java)); finish() }
@@ -55,8 +64,13 @@ class DetailsActivity : AppCompatActivity() {
                 txtLocation.text = listing.location
                 txtDate.text = "Available From: ${listing.availabilityDate}"
 
-                val images = if (listing.imageList.isNotEmpty()) listing.imageList 
-                             else listOf(listing.mainImage, android.R.drawable.ic_menu_gallery)
+                val images = if (listing.imageList.isNotEmpty()) {
+                    listing.imageList
+                } else if (listing.mainImage != null) {
+                    listOf(listing.mainImage, android.R.drawable.ic_menu_gallery.toString())
+                } else {
+                    listOf(R.mipmap.ic_launcher.toString(), android.R.drawable.ic_menu_gallery.toString())
+                }
                 
                 viewPager.adapter = ImageSliderAdapter(images)
                 TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()

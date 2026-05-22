@@ -16,7 +16,7 @@ data class Listing(
     val houseType: String,
     val isSaved: Boolean = false,
     val status: String = "Available", // "Available" or "RESERVED"
-    val mainImage: Int = 0,
-    val imageList: List<Int> = emptyList(), // For premium image slides
+    val mainImage: String? = null, // Can be resource ID as string or URI string
+    val imageList: List<String> = emptyList(), // For premium image slides
     val providerId: String? = null
 )

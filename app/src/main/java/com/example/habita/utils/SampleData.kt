@@ -11,19 +11,19 @@ object SampleData {
         val listings = mutableListOf<Listing>()
         
         val dummyImages = listOf(
-            R.drawable.house_1,
-            R.drawable.house_2,
-            R.drawable.house_3,
-            R.drawable.house_4,
-            R.drawable.house_5
+            R.drawable.house_1.toString(),
+            R.drawable.house_2.toString(),
+            R.drawable.house_3.toString(),
+            R.drawable.house_4.toString(),
+            R.drawable.house_5.toString()
         )
 
         val innerImages = listOf(
-            R.drawable.house_inner_1,
-            R.drawable.house_inner_2,
-            R.drawable.house_inner_3,
-            R.drawable.house_inner_4,
-            R.drawable.house_inner_5
+            R.drawable.house_inner_1.toString(),
+            R.drawable.house_inner_2.toString(),
+            R.drawable.house_inner_3.toString(),
+            R.drawable.house_inner_4.toString(),
+            R.drawable.house_inner_5.toString()
         )
         
         for (i in 1..65) {
@@ -49,7 +49,6 @@ object SampleData {
             
             listings.add(
                 Listing(
-                    id = i,
                     title = "$type in $loc #$i",
                     price = price,
                     location = loc,
@@ -57,7 +56,8 @@ object SampleData {
                     houseType = type,
                     status = status,
                     mainImage = mainImg,
-                    imageList = extraImgs
+                    imageList = extraImgs,
+                    providerId = "sample_provider" // Mark as sample data
                 )
             )
         }

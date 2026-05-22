@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-data class Conversation(val providerName: String, val lastMessage: String, val time: String)
+data class Conversation(val partnerName: String, val lastMessage: String, val time: String)
 
 class ChatActivity : AppCompatActivity() {
 
@@ -31,7 +31,9 @@ class ChatActivity : AppCompatActivity() {
 
         database = AppDatabase.getDatabase(this)
         val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-        val role = sharedPref.getString("role", "student")
+        val role = sharedPref.getString("userRole", "student")
+        val myId = sharedPref.getString("userId", "") ?: ""
+        val myName = sharedPref.getString("userName", "Me") ?: "Me" // Assuming we store name
 
         // Back button
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener {
@@ -61,12 +63,30 @@ class ChatActivity : AppCompatActivity() {
         val recyclerChatList = findViewById<RecyclerView>(R.id.recyclerChatList)
         recyclerChatList.layoutManager = LinearLayoutManager(this)
         
-        // Load only real conversations from local Room Database
         lifecycleScope.launch {
             database.messageDao().getLatestMessagesPerRoom().collect { messages ->
-                val conversations = messages.map { msg ->
+                // Filter messages relevant to me. 
+                // ChatRoomId format: studentId_providerName
+                val filteredMessages = if (role == "provider") {
+                    // Providers see rooms that end with their "name" (simplified logic)
+                    // In a real app, this would be providerId. 
+                    // Let's assume we use providerId for the second part.
+                    messages.filter { it.chatRoomId.endsWith("_$myId") || it.chatRoomId.contains(myName) }
+                } else {
+                    messages.filter { it.chatRoomId.startsWith("${myId}_") }
+                }
+
+                val conversations = filteredMessages.map { msg ->
+                    val partner = if (role == "student") {
+                        msg.chatRoomId.substringAfter("_")
+                    } else {
+                        // For provider, the student is at the start
+                        // We'd ideally have student name here, using ID for now or looking up
+                        msg.chatRoomId.substringBefore("_")
+                    }
+
                     Conversation(
-                        providerName = msg.chatRoomId.substringAfter("_"),
+                        partnerName = partner,
                         lastMessage = msg.text,
                         time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(msg.timestamp))
                     )
@@ -78,7 +98,7 @@ class ChatActivity : AppCompatActivity() {
 
                 recyclerChatList.adapter = ChatListAdapter(conversations) { conversation ->
                     val intent = Intent(this@ChatActivity, ChatDetailActivity::class.java)
-                    intent.putExtra("partnerName", conversation.providerName)
+                    intent.putExtra("partnerName", conversation.partnerName)
                     startActivity(intent)
                 }
             }

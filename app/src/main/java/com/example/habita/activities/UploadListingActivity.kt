@@ -2,6 +2,7 @@ package com.example.habita.activities
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -28,6 +29,13 @@ class UploadListingActivity : AppCompatActivity() {
             val txtImageName = findViewById<TextView>(R.id.txtUploadedImageName)
             val imgPreview = findViewById<ImageView>(R.id.imgUploadPreview)
             
+            // Persist permission to access this URI later (e.g. after app restart)
+            try {
+                contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
             txtImageName.text = "Selected: Property_Image_${System.currentTimeMillis() % 10000}.jpg"
             imgPreview.setImageURI(uri)
             imgPreview.visibility = View.VISIBLE
@@ -102,29 +110,11 @@ class UploadListingActivity : AppCompatActivity() {
                 val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
                 val providerId = sharedPref.getString("userId", null)
 
-                // Select beautiful random premium real house image and corresponding interior images
-                val dummyImages = listOf(
-                    R.drawable.house_1,
-                    R.drawable.house_2,
-                    R.drawable.house_3,
-                    R.drawable.house_4,
-                    R.drawable.house_5
-                )
-                val innerImages = listOf(
-                    R.drawable.house_inner_1,
-                    R.drawable.house_inner_2,
-                    R.drawable.house_inner_3,
-                    R.drawable.house_inner_4,
-                    R.drawable.house_inner_5
-                )
-                
-                val randomIdx = Random().nextInt(dummyImages.size)
-                val mainImg = dummyImages[randomIdx]
-                val extraImgs = listOf(
-                    mainImg,
-                    innerImages[randomIdx],
-                    dummyImages[(randomIdx + 1) % dummyImages.size],
-                    innerImages[(randomIdx + 1) % innerImages.size]
+                // Use the URI if selected, otherwise a default resource string
+                val mainImg = selectedImageUri?.toString() ?: R.drawable.house_1.toString()
+                val extraImgs = if (selectedImageUri != null) listOf(mainImg) else listOf(
+                    R.drawable.house_1.toString(),
+                    R.drawable.house_inner_1.toString()
                 )
 
                 val newListing = Listing(

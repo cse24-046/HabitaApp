@@ -1,5 +1,6 @@
 package com.example.habita.adapters
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,9 +39,21 @@ class ListingAdapter(
         holder.txtListingPrice.text = "P${listing.price} / month"
         holder.txtListingLocation.text = listing.location
         
-        // Using high quality main image
-        if (listing.mainImage != 0) {
-            holder.imgListing.setImageResource(listing.mainImage)
+        // Handle image loading (Resource ID as string or URI string)
+        val mainImage = listing.mainImage
+        if (mainImage != null) {
+            try {
+                // Check if it's a resource ID (integer)
+                val resId = mainImage.toIntOrNull()
+                if (resId != null) {
+                    holder.imgListing.setImageResource(resId)
+                } else {
+                    // It's a URI string
+                    holder.imgListing.setImageURI(Uri.parse(mainImage))
+                }
+            } catch (e: Exception) {
+                holder.imgListing.setImageResource(R.mipmap.ic_launcher)
+            }
         } else {
             holder.imgListing.setImageResource(R.mipmap.ic_launcher)
         }

@@ -113,8 +113,8 @@ class HomeActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             val dao = database.listingDao()
-            // Ensure all listings available in student home
-            if (dao.getAllListings().first().size < 10) { 
+            // Ensure all 65 listings are available - populate if low count
+            if (dao.getAllListings().first().size < 60) { 
                 dao.insertAll(SampleData.get65Listings())
             }
             dao.getAllListings().collect { listings ->
@@ -168,24 +168,19 @@ class HomeActivity : AppCompatActivity() {
     private fun applyFilters() {
         val query = searchBar.text.toString().lowercase()
 
-        val filtered = if (switchLock.isChecked) {
-            val min = if (priceSlider.values.isNotEmpty()) priceSlider.values[0].toInt() else 0
-            val max = if (priceSlider.values.size > 1) priceSlider.values[1].toInt() else 10000
-            val loc = locationSpinner.selectedItem?.toString() ?: "Any"
-            val type = houseTypeSpinner.selectedItem?.toString() ?: "Any"
-            val date = etPreferredDate.text.toString()
-            
-            allListings.filter { listing ->
-                (listing.title.lowercase().contains(query) || listing.location.lowercase().contains(query)) &&
-                (listing.price in min..max) &&
-                (loc == "Any" || listing.location == loc) &&
-                (type == "Any" || listing.houseType == type) &&
-                (date.isEmpty() || listing.availabilityDate.contains(date, ignoreCase = true))
-            }
-        } else {
-            allListings.filter { listing ->
-                listing.title.lowercase().contains(query) || listing.location.lowercase().contains(query)
-            }
+        // ALWAYS apply filters based on preferences (even if not locked)
+        val min = if (priceSlider.values.isNotEmpty()) priceSlider.values[0].toInt() else 0
+        val max = if (priceSlider.values.size > 1) priceSlider.values[1].toInt() else 10000
+        val loc = locationSpinner.selectedItem?.toString() ?: "Any"
+        val type = houseTypeSpinner.selectedItem?.toString() ?: "Any"
+        val date = etPreferredDate.text.toString()
+        
+        val filtered = allListings.filter { listing ->
+            (listing.title.lowercase().contains(query) || listing.location.lowercase().contains(query)) &&
+            (listing.price in min..max) &&
+            (loc == "Any" || listing.location == loc) &&
+            (type == "Any" || listing.houseType == type) &&
+            (date.isEmpty() || listing.availabilityDate.contains(date, ignoreCase = true))
         }
         updateRecyclerView(filtered)
     }
@@ -214,15 +209,14 @@ class HomeActivity : AppCompatActivity() {
         val btnClose = dialog.findViewById<Button>(R.id.btnClose)
         val btnViewDetails = dialog.findViewById<Button>(R.id.btnDialogViewDetails)
 
-        // Removed the programmatic creation of grey button, using the blue one from XML
         btnViewDetails.visibility = View.VISIBLE
 
         val sliderImages = if (listing.imageList.isNotEmpty()) {
             listing.imageList
-        } else if (listing.mainImage != 0) {
-            listOf(listing.mainImage, android.R.drawable.ic_menu_gallery, android.R.drawable.ic_menu_camera)
+        } else if (listing.mainImage != null) {
+            listOf(listing.mainImage!!, android.R.drawable.ic_menu_gallery.toString())
         } else {
-            listOf(R.mipmap.ic_launcher, android.R.drawable.ic_menu_gallery, android.R.drawable.ic_menu_camera)
+            listOf(R.mipmap.ic_launcher.toString(), android.R.drawable.ic_menu_gallery.toString())
         }
 
         viewPager.adapter = ImageSliderAdapter(sliderImages)
