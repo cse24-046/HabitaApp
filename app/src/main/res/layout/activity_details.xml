@@ -117,7 +117,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@string/ai_desc_default"
+                    android:text="@string/listing_desc_default"
                     android:textSize="15sp"
                     android:textColor="@color/text_body"
                     android:lineSpacingExtra="6dp" />

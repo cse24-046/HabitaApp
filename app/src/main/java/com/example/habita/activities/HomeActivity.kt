@@ -102,10 +102,10 @@ class HomeActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             val dao = database.listingDao()
-            if (dao.getSampleListings().first().size < 65) {
+            if (dao.getAllListings().first().size < 65) {
                 dao.insertAll(SampleData.get65Listings())
             }
-            dao.getSampleListings().collect { listings ->
+            dao.getAllListings().collect { listings ->
                 allListings = listings
                 applyFilters()
                 if (isLocked) checkForNewMatches(listings)

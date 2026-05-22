@@ -44,8 +44,7 @@ object SampleData {
                     houseType = type,
                     status = status,
                     mainImage = mainImg,
-                    imageList = extraImgs,
-                    isSample = true
+                    imageList = extraImgs
                 )
             )
         }
