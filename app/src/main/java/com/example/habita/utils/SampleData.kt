@@ -11,11 +11,11 @@ object SampleData {
         val listings = mutableListOf<Listing>()
         
         val dummyImages = listOf(
-            android.R.drawable.ic_menu_gallery,
-            android.R.drawable.ic_menu_camera,
-            android.R.drawable.ic_menu_today,
-            android.R.drawable.ic_dialog_info,
-            android.R.drawable.ic_menu_slideshow
+            R.drawable.house_1,
+            R.drawable.house_2,
+            R.drawable.house_3,
+            R.drawable.house_4,
+            R.drawable.house_5
         )
         
         for (i in 1..65) {

@@ -175,6 +175,54 @@
                     android:drawableEnd="@android:drawable/ic_menu_myplaces"
                     android:drawableTint="@color/text_secondary" />
 
+                <!-- Property Images Upload -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Property Images"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <Button
+                        android:id="@+id/btnUploadSelectImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Choose Image"
+                        android:backgroundTint="@color/bg_accent"
+                        android:textColor="@color/color_primary"
+                        android:textSize="12sp"
+                        style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+                    <TextView
+                        android:id="@+id/txtUploadedImageName"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="No images selected"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/imgUploadPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:layout_marginTop="12dp"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    android:background="@color/bg_accent"
+                    android:contentDescription="Property Preview" />
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

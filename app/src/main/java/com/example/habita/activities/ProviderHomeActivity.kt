@@ -46,17 +46,9 @@ class ProviderHomeActivity : AppCompatActivity() {
             startActivity(Intent(this, ChatActivity::class.java))
         }
 
-        // Load provider name
+        // Load provider userId
         val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val userId = sharedPref.getString("userId", null)
-        if (userId != null) {
-            lifecycleScope.launch {
-                val user = database.userDao().getUserById(userId)
-                if (user != null) {
-                    txtWelcomeSubtitle.text = "Logged in as ${user.name}"
-                }
-            }
-        }
 
         // Set up list and stats observer
         lifecycleScope.launch {
