@@ -10,7 +10,6 @@ object SampleData {
         val types = listOf("Single Room", "Bachelor Pad", "One Bedroom Flat", "Shared Apartment", "Studio")
         val listings = mutableListOf<Listing>()
         
-        // Simulating high-quality AI images using built-in drawables as placeholders
         val dummyImages = listOf(
             android.R.drawable.ic_menu_gallery,
             android.R.drawable.ic_menu_camera,
@@ -45,7 +44,8 @@ object SampleData {
                     houseType = type,
                     status = status,
                     mainImage = mainImg,
-                    imageList = extraImgs
+                    imageList = extraImgs,
+                    isSample = true
                 )
             )
         }

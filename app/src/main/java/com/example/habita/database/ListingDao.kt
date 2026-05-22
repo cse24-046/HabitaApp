@@ -8,7 +8,13 @@ interface ListingDao {
     @Query("SELECT * FROM listings")
     fun getAllListings(): Flow<List<Listing>>
 
-    @Query("SELECT * FROM listings WHERE isSaved = 1")
+    @Query("SELECT * FROM listings WHERE isSample = 1")
+    fun getSampleListings(): Flow<List<Listing>>
+
+    @Query("SELECT * FROM listings WHERE isSample = 0 AND providerId = :providerId")
+    fun getProviderListings(providerId: String): Flow<List<Listing>>
+
+    @Query("SELECT * FROM listings WHERE isSaved = 1 AND isSample = 1")
     fun getSavedListings(): Flow<List<Listing>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

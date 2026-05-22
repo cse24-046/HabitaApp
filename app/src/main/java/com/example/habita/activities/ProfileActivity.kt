@@ -1,5 +1,6 @@
 package com.example.habita.activities
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -7,12 +8,24 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.habita.R
+import com.example.habita.database.AppDatabase
+import kotlinx.coroutines.launch
 
 class ProfileActivity : AppCompatActivity() {
+    private lateinit var txtProfileName: TextView
+    private lateinit var txtProfileEmail: TextView
+    private lateinit var database: AppDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
+
+        database = AppDatabase.getDatabase(this)
+        txtProfileName = findViewById(R.id.profileName)
+        txtProfileEmail = findViewById(R.id.profileEmail)
+        loadUserProfile()
 
         // Standardized Navigation Logic
         findViewById<ImageButton>(R.id.navHome).setOnClickListener {
@@ -53,6 +66,24 @@ class ProfileActivity : AppCompatActivity() {
 
         btnSupport.setOnClickListener {
             Toast.makeText(this, "Support center is under maintenance", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadUserProfile()
+    }
+
+    private fun loadUserProfile() {
+        val userId = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+            .getString("userId", null) ?: return
+
+        lifecycleScope.launch {
+            val user = database.userDao().getUserById(userId)
+            if (user != null) {
+                txtProfileName.text = user.name
+                txtProfileEmail.text = user.email
+            }
         }
     }
 }
