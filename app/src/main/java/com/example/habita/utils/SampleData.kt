@@ -38,7 +38,7 @@ object SampleData {
             listings.add(
                 Listing(
                     id = i,
-                    title = "Premium AI-Designed $type in $loc #$i",
+                    title = "Premium $type in $loc #$i",
                     price = price,
                     location = loc,
                     availabilityDate = String.format(Locale.getDefault(), "%02d %s 2026", day, month),

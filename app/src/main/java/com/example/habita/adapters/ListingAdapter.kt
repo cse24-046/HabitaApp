@@ -38,7 +38,7 @@ class ListingAdapter(
         holder.txtListingPrice.text = "P${listing.price} / month"
         holder.txtListingLocation.text = listing.location
         
-        // Using high quality/AI generated main image
+        // Using high quality main image
         if (listing.mainImage != 0) {
             holder.imgListing.setImageResource(listing.mainImage)
         } else {

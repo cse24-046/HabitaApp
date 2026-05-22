@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F7F7FB">
+    android:background="@color/bg_app">
 
     <!-- Header -->
     <TextView
@@ -14,8 +14,8 @@
         android:text="Messages"
         android:textSize="28sp"
         android:textStyle="bold"
-        android:textColor="#1F1F39"
-        android:background="#FFFFFF"
+        android:textColor="@color/text_primary"
+        android:background="@color/bg_surface"
         android:elevation="2dp" />
 
     <!-- Chat List -->
@@ -31,13 +31,13 @@
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:orientation="horizontal"
-        android:background="#FFFFFF"
+        android:background="@color/bg_surface"
         android:elevation="8dp"
         android:gravity="center">
 
-        <ImageButton android:id="@+id/navHome" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/ic_menu_today" app:tint="#777799" android:contentDescription="Home" />
-        <ImageButton android:id="@+id/navSaved" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/btn_star_big_on" app:tint="#777799" android:contentDescription="Saved" />
-        <ImageButton android:id="@+id/navChat" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/stat_notify_chat" app:tint="#6C4DFF" android:contentDescription="Chat" />
-        <ImageButton android:id="@+id/navProfile" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/ic_menu_myplaces" app:tint="#777799" android:contentDescription="Profile" />
+        <ImageButton android:id="@+id/navHome" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/ic_menu_today" app:tint="@color/tint_icon_inactive" android:contentDescription="Home" />
+        <ImageButton android:id="@+id/navSaved" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/btn_star_big_on" app:tint="@color/tint_icon_inactive" android:contentDescription="Saved" />
+        <ImageButton android:id="@+id/navChat" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/stat_notify_chat" app:tint="@color/tint_icon_active" android:contentDescription="Chat" />
+        <ImageButton android:id="@+id/navProfile" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/ic_menu_myplaces" app:tint="@color/tint_icon_inactive" android:contentDescription="Profile" />
     </LinearLayout>
 </LinearLayout>

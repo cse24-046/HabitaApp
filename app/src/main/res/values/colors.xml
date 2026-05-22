@@ -1,10 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <!-- Brand Colors (Navy Blue & Grey) -->
+    <color name="color_primary">#1A365D</color> <!-- Premium Navy Blue -->
+    <color name="color_primary_variant">#0F253F</color> <!-- Darker Navy Blue -->
+    <color name="color_secondary">#4B5563</color> <!-- Slate Grey -->
+    <color name="color_secondary_variant">#374151</color> <!-- Darker Slate Grey -->
+
+    <!-- Theme Neutral/Background Colors (Light Mode) -->
+    <color name="bg_app">#F4F6F9</color> <!-- Sleek light gray/blue background -->
+    <color name="bg_surface">#FFFFFF</color> <!-- White card surface -->
+    <color name="bg_accent">#F1F5F9</color> <!-- Accent grey-blue -->
+    <color name="bg_selected_role">#E2ECF8</color> <!-- Light Navy Blue tint for checked state -->
+    <color name="divider">#E2E8F0</color> <!-- Slate border divider -->
+
+    <!-- Text Colors (Light Mode) -->
+    <color name="text_primary">#1E293B</color> <!-- Midnight Blue/Near Black text -->
+    <color name="text_secondary">#64748B</color> <!-- Slate Grey text -->
+    <color name="text_body">#475569</color> <!-- Muted Charcoal text -->
+
+    <!-- Badges & Statuses -->
+    <color name="color_success">#10B981</color> <!-- Premium Green text -->
+    <color name="bg_success">#D1FAE5</color> <!-- Light green background -->
+    <color name="color_alert_reserved">#EF4444</color> <!-- Premium Red text -->
+    <color name="bg_alert_reserved">#FEE2E2</color> <!-- Light red background -->
+
+    <!-- Icon Tints -->
+    <color name="tint_icon_inactive">#94A3B8</color>
+    <color name="tint_icon_active">#1A365D</color>
+
+    <!-- Original/Standard System Colors to protect older references -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="purple_200">#B0C8FF</color>
+    <color name="purple_500">#1A365D</color>
+    <color name="purple_700">#0F253F</color>
+    <color name="teal_200">#4B5563</color>
+    <color name="teal_700">#374151</color>
 </resources>

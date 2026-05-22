@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F7F7FB">
+    android:background="@color/bg_app">
 
     <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="12dp"
-        android:background="#FFFFFF"
+        android:background="@color/bg_surface"
         android:elevation="4dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
@@ -22,7 +22,7 @@
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@android:drawable/ic_menu_revert"
-            app:tint="#1F1F39"
+            app:tint="@color/text_primary"
             android:contentDescription="@string/back" />
 
         <TextView
@@ -33,7 +33,7 @@
             android:text="@string/saved_title"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#1F1F39" />
+            android:textColor="@color/text_primary" />
     </LinearLayout>
 
     <LinearLayout
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:text="@string/saved_subtitle"
             android:textSize="14sp"
-            android:textColor="#777799"
+            android:textColor="@color/text_secondary"
             android:layout_marginBottom="16dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -64,13 +64,13 @@
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:orientation="horizontal"
-        android:background="#FFFFFF"
+        android:background="@color/bg_surface"
         android:elevation="8dp"
         android:gravity="center">
 
-        <ImageButton android:id="@+id/navHome" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/ic_menu_today" app:tint="#777799" android:contentDescription="@string/nav_home" />
-        <ImageButton android:id="@+id/navSaved" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/btn_star_big_on" app:tint="#6C4DFF" android:contentDescription="@string/nav_saved" />
-        <ImageButton android:id="@+id/navChat" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/stat_notify_chat" app:tint="#777799" android:contentDescription="@string/nav_chat" />
-        <ImageButton android:id="@+id/navProfile" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/ic_menu_myplaces" app:tint="#777799" android:contentDescription="@string/nav_profile" />
+        <ImageButton android:id="@+id/navHome" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/ic_menu_today" app:tint="@color/tint_icon_inactive" android:contentDescription="@string/nav_home" />
+        <ImageButton android:id="@+id/navSaved" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/btn_star_big_on" app:tint="@color/tint_icon_active" android:contentDescription="@string/nav_saved" />
+        <ImageButton android:id="@+id/navChat" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/stat_notify_chat" app:tint="@color/tint_icon_inactive" android:contentDescription="@string/nav_chat" />
+        <ImageButton android:id="@+id/navProfile" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="?attr/selectableItemBackgroundBorderless" android:src="@android:drawable/ic_menu_myplaces" app:tint="@color/tint_icon_inactive" android:contentDescription="@string/nav_profile" />
     </LinearLayout>
 </LinearLayout>

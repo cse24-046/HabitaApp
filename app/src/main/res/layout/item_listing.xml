@@ -9,7 +9,7 @@
     app:cardCornerRadius="18dp"
     app:cardElevation="4dp"
     app:strokeWidth="0dp"
-    app:cardBackgroundColor="#FFFFFF">
+    app:cardBackgroundColor="@color/bg_surface">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,7 +25,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/ic_launcher" />
+                android:src="@mipmap/ic_launcher"
+                android:contentDescription="Listing Main Image" />
 
             <!-- RESERVED Overlay Badge -->
             <TextView
@@ -34,7 +35,7 @@
                 android:layout_height="match_parent"
                 android:background="#B3000000"
                 android:text="@string/reserved"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -49,7 +50,7 @@
                 android:layout_margin="12dp"
                 android:background="@drawable/bg_card"
                 android:src="@android:drawable/btn_star_big_off"
-                app:tint="#6C4DFF"
+                app:tint="@color/color_primary"
                 android:contentDescription="Save Listing" />
         </RelativeLayout>
 
@@ -66,7 +67,7 @@
                 android:text="Cozy Room - Block 6"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#1F1F39" />
+                android:textColor="@color/text_primary" />
 
             <TextView
                 android:id="@+id/txtListingPrice"
@@ -76,7 +77,7 @@
                 android:text="P1200 / month"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:textColor="#6C4DFF" />
+                android:textColor="@color/color_primary" />
 
             <TextView
                 android:id="@+id/txtListingLocation"
@@ -85,7 +86,7 @@
                 android:layout_marginTop="4dp"
                 android:text="Block 6, Gaborone"
                 android:textSize="14sp"
-                android:textColor="#777799" />
+                android:textColor="@color/text_secondary" />
 
         </LinearLayout>
 

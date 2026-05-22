@@ -17,5 +17,5 @@ data class Listing(
     val isSaved: Boolean = false,
     val status: String = "Available", // "Available" or "RESERVED"
     val mainImage: Int = 0,
-    val imageList: List<Int> = emptyList() // For AI generated image slides
+    val imageList: List<Int> = emptyList() // For premium image slides
 )
