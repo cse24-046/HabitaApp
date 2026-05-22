@@ -17,6 +17,14 @@ object SampleData {
             R.drawable.house_4,
             R.drawable.house_5
         )
+
+        val innerImages = listOf(
+            R.drawable.house_inner_1,
+            R.drawable.house_inner_2,
+            R.drawable.house_inner_3,
+            R.drawable.house_inner_4,
+            R.drawable.house_inner_5
+        )
         
         for (i in 1..65) {
             val loc = locations[i % locations.size]
@@ -32,7 +40,12 @@ object SampleData {
             
             // Assign a main image and a list of images for the slider
             val mainImg = dummyImages[i % dummyImages.size]
-            val extraImgs = listOf(mainImg, dummyImages[(i+1) % dummyImages.size], dummyImages[(i+2) % dummyImages.size])
+            val extraImgs = listOf(
+                mainImg,
+                innerImages[i % innerImages.size],
+                dummyImages[(i + 1) % dummyImages.size],
+                innerImages[(i + 1) % innerImages.size]
+            )
             
             listings.add(
                 Listing(

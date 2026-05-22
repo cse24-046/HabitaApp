@@ -155,18 +155,25 @@ class HomeActivity : AppCompatActivity() {
 
     private fun applyFilters() {
         val query = searchBar.text.toString().lowercase()
-        val min = if (priceSlider.values.isNotEmpty()) priceSlider.values[0].toInt() else 0
-        val max = if (priceSlider.values.size > 1) priceSlider.values[1].toInt() else 10000
-        val loc = locationSpinner.selectedItem?.toString() ?: "Any"
-        val type = houseTypeSpinner.selectedItem?.toString() ?: "Any"
-        val date = etPreferredDate.text.toString()
 
-        val filtered = allListings.filter { listing ->
-            (listing.title.lowercase().contains(query) || listing.location.lowercase().contains(query)) &&
-            (listing.price in min..max) &&
-            (loc == "Any" || listing.location == loc) &&
-            (type == "Any" || listing.houseType == type) &&
-            (date.isEmpty() || listing.availabilityDate.contains(date, ignoreCase = true))
+        val filtered = if (switchLock.isChecked) {
+            val min = if (priceSlider.values.isNotEmpty()) priceSlider.values[0].toInt() else 0
+            val max = if (priceSlider.values.size > 1) priceSlider.values[1].toInt() else 10000
+            val loc = locationSpinner.selectedItem?.toString() ?: "Any"
+            val type = houseTypeSpinner.selectedItem?.toString() ?: "Any"
+            val date = etPreferredDate.text.toString()
+            
+            allListings.filter { listing ->
+                (listing.title.lowercase().contains(query) || listing.location.lowercase().contains(query)) &&
+                (listing.price in min..max) &&
+                (loc == "Any" || listing.location == loc) &&
+                (type == "Any" || listing.houseType == type) &&
+                (date.isEmpty() || listing.availabilityDate.contains(date, ignoreCase = true))
+            }
+        } else {
+            allListings.filter { listing ->
+                listing.title.lowercase().contains(query) || listing.location.lowercase().contains(query)
+            }
         }
         updateRecyclerView(filtered)
     }

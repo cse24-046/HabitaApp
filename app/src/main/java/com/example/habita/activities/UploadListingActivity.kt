@@ -3,7 +3,9 @@ package com.example.habita.activities
 import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.habita.R
@@ -18,6 +20,19 @@ class UploadListingActivity : AppCompatActivity() {
     private lateinit var database: AppDatabase
     private val calendar = Calendar.getInstance()
     private lateinit var etDate: EditText
+    private var selectedImageUri: android.net.Uri? = null
+
+    private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) {
+            selectedImageUri = uri
+            val txtImageName = findViewById<TextView>(R.id.txtUploadedImageName)
+            val imgPreview = findViewById<ImageView>(R.id.imgUploadPreview)
+            
+            txtImageName.text = "Selected: Property_Image_${System.currentTimeMillis() % 10000}.jpg"
+            imgPreview.setImageURI(uri)
+            imgPreview.visibility = View.VISIBLE
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +47,7 @@ class UploadListingActivity : AppCompatActivity() {
         etDate = findViewById(R.id.etUploadDate)
         val btnSubmit = findViewById<Button>(R.id.btnSubmitUpload)
         val btnBack = findViewById<ImageButton>(R.id.btnBackToDashboard)
+        val btnSelectImage = findViewById<Button>(R.id.btnUploadSelectImage)
 
         // Set up Spinners using the arrays in arrays.xml
         val locations = resources.getStringArray(R.array.locations_array)
@@ -54,6 +70,10 @@ class UploadListingActivity : AppCompatActivity() {
         etDate.setOnClickListener {
             DatePickerDialog(this, dateSetListener,
                 calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+        }
+
+        btnSelectImage.setOnClickListener {
+            selectImageLauncher.launch("image/*")
         }
 
         btnBack.setOnClickListener {
@@ -82,17 +102,30 @@ class UploadListingActivity : AppCompatActivity() {
                 val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
                 val providerId = sharedPref.getString("userId", null)
 
-                // Select random images so it matches standard dummy image sets beautifully
+                // Select beautiful random premium real house image and corresponding interior images
                 val dummyImages = listOf(
-                    android.R.drawable.ic_menu_gallery,
-                    android.R.drawable.ic_menu_camera,
-                    android.R.drawable.ic_menu_today,
-                    android.R.drawable.ic_dialog_info,
-                    android.R.drawable.ic_menu_slideshow
+                    R.drawable.house_1,
+                    R.drawable.house_2,
+                    R.drawable.house_3,
+                    R.drawable.house_4,
+                    R.drawable.house_5
                 )
+                val innerImages = listOf(
+                    R.drawable.house_inner_1,
+                    R.drawable.house_inner_2,
+                    R.drawable.house_inner_3,
+                    R.drawable.house_inner_4,
+                    R.drawable.house_inner_5
+                )
+                
                 val randomIdx = Random().nextInt(dummyImages.size)
                 val mainImg = dummyImages[randomIdx]
-                val extraImgs = listOf(mainImg, dummyImages[(randomIdx + 1) % dummyImages.size], dummyImages[(randomIdx + 2) % dummyImages.size])
+                val extraImgs = listOf(
+                    mainImg,
+                    innerImages[randomIdx],
+                    dummyImages[(randomIdx + 1) % dummyImages.size],
+                    innerImages[(randomIdx + 1) % innerImages.size]
+                )
 
                 val newListing = Listing(
                     title = title,
