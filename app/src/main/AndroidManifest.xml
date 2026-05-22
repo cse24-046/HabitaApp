@@ -21,6 +21,8 @@
         </activity>
 
         <activity android:name=".activities.RegisterActivity" />
+        <activity android:name=".activities.ProviderHomeActivity" />
+        <activity android:name=".activities.UploadListingActivity" />
         <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.DetailsActivity" />
         <activity android:name=".activities.PaymentActivity" />

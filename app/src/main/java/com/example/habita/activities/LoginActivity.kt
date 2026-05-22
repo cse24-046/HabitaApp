@@ -38,10 +38,17 @@ class LoginActivity : AppCompatActivity() {
                 val user = database.userDao().getUserByEmail(email)
                 if (user != null && user.password == password) {
                     val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-                    sharedPref.edit().putString("userId", user.id).apply()
+                    sharedPref.edit()
+                        .putString("userId", user.id)
+                        .putString("userRole", user.role)
+                        .apply()
 
                     Toast.makeText(this@LoginActivity, "Login Successful", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this@LoginActivity, HomeActivity::class.java))
+                    if (user.role == "provider") {
+                        startActivity(Intent(this@LoginActivity, ProviderHomeActivity::class.java))
+                    } else {
+                        startActivity(Intent(this@LoginActivity, HomeActivity::class.java))
+                    }
                     finish()
                 } else {
                     Toast.makeText(this@LoginActivity, "Invalid email or password", Toast.LENGTH_SHORT).show()

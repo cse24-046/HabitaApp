@@ -14,6 +14,9 @@ interface ListingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(listings: List<Listing>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertListing(listing: Listing)
+
     @Update
     suspend fun updateListing(listing: Listing)
 

@@ -1,0 +1,110 @@
+package com.example.habita.activities
+
+import android.app.DatePickerDialog
+import android.os.Bundle
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.habita.R
+import com.example.habita.database.AppDatabase
+import com.example.habita.database.Listing
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
+
+class UploadListingActivity : AppCompatActivity() {
+
+    private lateinit var database: AppDatabase
+    private val calendar = Calendar.getInstance()
+    private lateinit var etDate: EditText
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_upload_listing)
+
+        database = AppDatabase.getDatabase(this)
+
+        val etTitle = findViewById<EditText>(R.id.etUploadTitle)
+        val etPrice = findViewById<EditText>(R.id.etUploadPrice)
+        val spinnerLocation = findViewById<Spinner>(R.id.spinnerUploadLocation)
+        val spinnerHouseType = findViewById<Spinner>(R.id.spinnerUploadHouseType)
+        etDate = findViewById(R.id.etUploadDate)
+        val btnSubmit = findViewById<Button>(R.id.btnSubmitUpload)
+        val btnBack = findViewById<ImageButton>(R.id.btnBackToDashboard)
+
+        // Set up Spinners using the arrays in arrays.xml
+        val locations = resources.getStringArray(R.array.locations_array)
+        val adapterLocation = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, locations)
+        spinnerLocation.adapter = adapterLocation
+
+        val houseTypes = resources.getStringArray(R.array.house_types_array)
+        val adapterHouseType = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, houseTypes)
+        spinnerHouseType.adapter = adapterHouseType
+
+        // Set up DatePickerDialog
+        val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month)
+            calendar.set(Calendar.DAY_OF_MONTH, day)
+            val format = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+            etDate.setText(format.format(calendar.time))
+        }
+
+        etDate.setOnClickListener {
+            DatePickerDialog(this, dateSetListener,
+                calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+        }
+
+        btnBack.setOnClickListener {
+            finish()
+        }
+
+        btnSubmit.setOnClickListener {
+            val title = etTitle.text.toString().trim()
+            val priceStr = etPrice.text.toString().trim()
+            val location = spinnerLocation.selectedItem.toString()
+            val houseType = spinnerHouseType.selectedItem.toString()
+            val availabilityDate = etDate.text.toString().trim()
+
+            if (title.isEmpty() || priceStr.isEmpty() || availabilityDate.isEmpty()) {
+                Toast.makeText(this, "Please fill in all details", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val price = priceStr.toIntOrNull()
+            if (price == null || price <= 0) {
+                Toast.makeText(this, "Please enter a valid price", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            lifecycleScope.launch {
+                // Select random images so it matches standard dummy image sets beautifully
+                val dummyImages = listOf(
+                    android.R.drawable.ic_menu_gallery,
+                    android.R.drawable.ic_menu_camera,
+                    android.R.drawable.ic_menu_today,
+                    android.R.drawable.ic_dialog_info,
+                    android.R.drawable.ic_menu_slideshow
+                )
+                val randomIdx = Random().nextInt(dummyImages.size)
+                val mainImg = dummyImages[randomIdx]
+                val extraImgs = listOf(mainImg, dummyImages[(randomIdx + 1) % dummyImages.size], dummyImages[(randomIdx + 2) % dummyImages.size])
+
+                val newListing = Listing(
+                    title = title,
+                    price = price,
+                    location = location,
+                    availabilityDate = availabilityDate,
+                    houseType = houseType,
+                    status = "Available",
+                    mainImage = mainImg,
+                    imageList = extraImgs
+                )
+
+                database.listingDao().insertListing(newListing)
+                Toast.makeText(this@UploadListingActivity, "Listing Uploaded Successfully!", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        }
+    }
+}

@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.RadioGroup
+import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +25,8 @@ class RegisterActivity : AppCompatActivity() {
         val etEmail = findViewById<EditText>(R.id.etRegisterEmail)
         val etPassword = findViewById<EditText>(R.id.etRegisterPassword)
         val etConfirmPassword = findViewById<EditText>(R.id.etConfirmPassword)
+        val rgRole = findViewById<RadioGroup>(R.id.rgRole)
+        val rbStudent = findViewById<RadioButton>(R.id.rbStudent)
         val btnRegister = findViewById<Button>(R.id.btnRegister)
         val txtGoLogin = findViewById<TextView>(R.id.txtGoLogin)
 
@@ -49,11 +53,13 @@ class RegisterActivity : AppCompatActivity() {
                 if (existingUser != null) {
                     Toast.makeText(this@RegisterActivity, "User already exists", Toast.LENGTH_SHORT).show()
                 } else {
+                    val selectedRole = if (rbStudent.isChecked) "student" else "provider"
                     val newUser = User(
                         id = UUID.randomUUID().toString(),
                         name = name,
                         email = email,
-                        password = password
+                        password = password,
+                        role = selectedRole
                     )
                     database.userDao().insertUser(newUser)
                     Toast.makeText(this@RegisterActivity, "Registration successful", Toast.LENGTH_SHORT).show()
