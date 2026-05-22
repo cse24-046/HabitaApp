@@ -23,7 +23,6 @@ import com.example.habita.database.Listing
 import com.example.habita.utils.NotificationHelper
 import com.example.habita.utils.SampleData
 import com.google.android.material.slider.RangeSlider
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -43,6 +42,9 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var searchBar: EditText
     private lateinit var etPreferredDate: EditText
     private lateinit var switchLock: SwitchCompat
+
+    // Track the last count of matches to avoid duplicate notifications
+    private var lastMatchCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,14 +83,14 @@ class HomeActivity : AppCompatActivity() {
         houseTypeSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, houseTypes)
 
         // Load saved preferences
-        val isLocked = sharedPref.getBoolean("isLocked", false)
-        switchLock.isChecked = isLocked
+        val initialLocked = sharedPref.getBoolean("isLocked", false)
+        switchLock.isChecked = initialLocked
         priceSlider.setValues(sharedPref.getFloat("minPrice", 0f), sharedPref.getFloat("maxPrice", 10000f))
         locationSpinner.setSelection(locations.indexOf(sharedPref.getString("location", "Any")).coerceAtLeast(0))
         houseTypeSpinner.setSelection(houseTypes.indexOf(sharedPref.getString("houseType", "Any")).coerceAtLeast(0))
         etPreferredDate.setText(sharedPref.getString("prefDate", ""))
 
-        if (isLocked) disableControls()
+        if (initialLocked) disableControls()
 
         val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
             calendar.set(Calendar.YEAR, year)
@@ -113,15 +115,17 @@ class HomeActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             val dao = database.listingDao()
-            // Ensure all 65 listings are available - populate if low count
-            // We use first() to check the current state once before collecting
+            // Ensure listings are populated
             if (dao.getAllListings().first().size < 60) { 
                 dao.insertAll(SampleData.get65Listings())
             }
             dao.getAllListings().collect { listings ->
                 allListings = listings
                 applyFilters()
-                if (isLocked) checkForNewMatches(listings)
+                // Use current switch state to check for matches
+                if (switchLock.isChecked) {
+                    checkForNewMatches(listings)
+                }
             }
         }
 
@@ -138,15 +142,20 @@ class HomeActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnSavePreferences).setOnClickListener {
             val locked = switchLock.isChecked
             with(sharedPref.edit()) {
-                putFloat("minPrice", priceSlider.values[0])
-                putFloat("maxPrice", priceSlider.values[1])
+                putFloat("minPrice", priceSlider.values.getOrElse(0) { 0f })
+                putFloat("maxPrice", priceSlider.values.getOrElse(1) { 10000f })
                 putString("location", locationSpinner.selectedItem.toString())
                 putString("houseType", houseTypeSpinner.selectedItem.toString())
                 putString("prefDate", etPreferredDate.text.toString())
                 putBoolean("isLocked", locked)
                 apply()
             }
-            if (locked) disableControls() else enableControls()
+            if (locked) {
+                disableControls()
+                lastMatchCount = 0 // Reset to allow fresh notification for the new criteria
+            } else {
+                enableControls()
+            }
             Toast.makeText(this, if (locked) "Search Criteria Locked" else "Preferences Saved", Toast.LENGTH_SHORT).show()
             applyFilters()
         }
@@ -169,7 +178,6 @@ class HomeActivity : AppCompatActivity() {
     private fun applyFilters() {
         val query = searchBar.text.toString().lowercase()
 
-        // ALWAYS apply filters based on preferences (even if not locked)
         val min = if (priceSlider.values.isNotEmpty()) priceSlider.values[0].toInt() else 0
         val max = if (priceSlider.values.size > 1) priceSlider.values[1].toInt() else 10000
         val loc = locationSpinner.selectedItem?.toString() ?: "Any"
@@ -195,8 +203,7 @@ class HomeActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     val updatedListing = listing.copy(isSaved = !listing.isSaved)
                     database.listingDao().updateListing(updatedListing)
-                    allListings = allListings.map { if (it.id == listing.id) updatedListing else it }
-                    applyFilters()
+                    // The Flow collector handles the UI update automatically
                 }
             }
         )
@@ -249,11 +256,13 @@ class HomeActivity : AppCompatActivity() {
             it.status == "Available"
         }
         
-        if (matches.isNotEmpty()) {
+        // Only notify if the number of matches has increased to avoid repeat notifications
+        if (matches.isNotEmpty() && matches.size > lastMatchCount) {
             notificationHelper.showMatchNotification(
-                "Matches Found!",
+                "New Matches Found!",
                 "We found ${matches.size} homes matching your criteria."
             )
         }
+        lastMatchCount = matches.size
     }
 }
